@@ -214,7 +214,7 @@ mesh.map <- function(mesh.data,
     ggplot() +
     
     # Plot the choosen class
-    geom_sf(data = mesh.data, aes(fill = Value_Class), color = "transparent") +
+    geom_sf(data = mesh.data, aes(fill = Value_Class), color = "black") +
     
     # Plot the outline as a black line
     geom_sf(data = st_union(mesh.data), fill = "transparent",
