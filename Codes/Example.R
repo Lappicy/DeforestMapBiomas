@@ -7,7 +7,8 @@ FinalAnalysis <-
                   output.name = "Analysis_Uaca.txt",
                   MAPBIOMAS = 7.1)
 
-# Graph number 1 ####
+
+# Graph number 1 (time series + correlation) ####
 gg.deforestation.cor(proxy.table = FinalAnalysis,
                      type.one = "Growth",
                      type.two = "Deforestation",
@@ -15,3 +16,9 @@ gg.deforestation.cor(proxy.table = FinalAnalysis,
                      color.two = "darkgreen",
                      save.as = "Results/Deforestation vs Growth.png",
                      title.name = "Analysis for Uaça 1 e 2")
+
+
+# Graph number 2 (mesh map) ####
+mesh.map(mesh.data = FinalAnalysis,
+         save.map.as = "Results/Map acumulated deforestation.png",
+         map.height = 2500, map.width = 2000, map.units = "px")
