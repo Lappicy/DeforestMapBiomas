@@ -197,10 +197,10 @@ mesh.map <- function(mesh.data,
       # Create label for ggplot2
       col.used.label <-
         c(paste0("No ", tolower(class)),
-          paste0("Between ", col.limits[1], " and ", col.limits[2], " km2"),
-          paste0("Between ", col.limits[2], " and ", col.limits[3], " km2"),
-          paste0("Between ", col.limits[3], " and ", col.limits[4], " km2"),
-          paste0("More than ", col.limits[4]," km2"))
+          bquote("Between " ~ .(col.limits[1]) ~ " and " ~ .(col.limits[2]) ~ km^{2}),
+          bquote("Between " ~ .(col.limits[2]) ~ " and " ~ .(col.limits[3]) ~ km^{2}),
+          bquote("Between " ~ .(col.limits[3]) ~ " and " ~ .(col.limits[4]) ~ km^{2}),
+          bquote("More than " ~ .(col.limits[4]) ~ km^{2}))
     }
   })
   
@@ -232,7 +232,7 @@ mesh.map <- function(mesh.data,
     # Title for map, along with x and y axis and legend
     labs(title = paste0(class, " in ", year.used),
          x = "Longitude", y = "Latitude",
-         fill = paste0(class, "\nin km2")) +
+         fill = bquote(.(class) ~ " in " ~ km^{2} ~ ":")) +
     
     # If there are many years, change the title name
     {if(length(year.used) != 1){
@@ -250,7 +250,10 @@ mesh.map <- function(mesh.data,
     
     # Map theme
     theme_bw() +
-    theme(legend.position = "none")
+    theme(legend.position = "right",
+          legend.justification = "top",
+          legend.spacing.y = unit(0.5, "cm")) +
+    guides(fill = guide_legend(byrow = TRUE))
   
   
   # Save graph ####

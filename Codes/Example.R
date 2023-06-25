@@ -21,4 +21,4 @@ gg.deforestation.cor(proxy.table = FinalAnalysis,
 # Graph number 2 (mesh map) ####
 mesh.map(mesh.data = FinalAnalysis,
          save.map.as = "Results/Map acumulated deforestation.png",
-         map.height = 2500, map.width = 2000, map.units = "px")
+         map.height = 2300, map.width = 2100, map.units = "px")
