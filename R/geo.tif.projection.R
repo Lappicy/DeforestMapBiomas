@@ -6,6 +6,9 @@ geo.tif.projection <- function(geo.file, tif.file){
 
 
   # Function itself ####
+  # Read geo.file
+  geo.file <- read.geo(geo.file)
+
   # Projection of both the geospatial and tif files
   tif.projection <- sf::st_crs(tif.file)
   geo.projection <- sf::st_crs(geo.file)

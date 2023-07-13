@@ -1,5 +1,5 @@
 # Calculate the area of a SF object with the Albers projection ####
-Albers.Area <- function(geo.file){
+albers.area <- function(geo.file){
 
   # Libraries used ####
   require(sf)
@@ -12,6 +12,9 @@ Albers.Area <- function(geo.file){
     paste0("+proj=aea +lat_1=-5 +lat_2=-42 ",
            "+lat_0=-32 +lon_0=-60 +x_0=0 +y_0=0",
            " +ellps=aust_SA +units=m no_defs")
+
+  # Open geo.file
+  geo.file <- read.geo(geo.file)
 
   # Transform file (need to be sf) into the right projection
   geo.Albers <- sf::st_transform(geo.file, crs = albers.projection)
