@@ -1,0 +1,22 @@
+Package: DeforestMapBiomas
+Type: Package
+Title: Deforestation analysis using MapBiomas data
+Version: 0.1.0
+Author: Thiago Lappicy
+Maintainer: Thiago Lappicy <lappicy@gmail.com>
+Description: This package was created for analysing deforestation behaviors using
+    the already classified MapBiomas images. It creates a grid (mesh) to help
+    with visualization. This package was thought out to be helpful to 
+    link deforestation patterns with public policies.
+URL: https://github.com/Lappicy/DeforestMapBiomas
+License: MIT License
+Encoding: UTF-8
+LazyData: true
+Imports:
+    dplyr,
+    sf,
+    raster,
+    stats
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
