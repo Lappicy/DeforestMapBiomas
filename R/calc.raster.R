@@ -10,7 +10,7 @@ calc.raster <- function(geo.file, tif.file, year.used = NULL,
   # Function itself ####
   # Open geo.file and tif
   geo.file <- read.geo(geo.file)
-  if(class(tif.file) != "raster") tif.file <- raster::raster(tif.file)
+  if(!(class(tif.file) %in% c("raster", "RasterLayer"))) tif.file <- raster::raster(tif.file)
 
   # Make sure the projections are the same
   geo.file <- geo.tif.projection(geo.file = geo.file, tif.file = tif.file)
@@ -70,11 +70,13 @@ calc.raster <- function(geo.file, tif.file, year.used = NULL,
   }
 
   # Reorder columns in an alfa numeric manner
-  alfa.named.columns <- which(is.na(as.numeric(colnames(final.table))))
-  numeric.named.columns <- which(!is.na(as.numeric(colnames(final.table))))
-  numeric.named.columns <- sort(as.numeric(colnames(final.table)[numeric.named.columns]))
-  numeric.named.columns <- match(as.character(numeric.named.columns), colnames(final.table))
-  final.table <- final.table[,c(alfa.named.columns, numeric.named.columns)]
+  suppressWarnings({
+    alfa.named.columns <- which(is.na(as.numeric(colnames(final.table))))
+    numeric.named.columns <- which(!is.na(as.numeric(colnames(final.table))))
+    numeric.named.columns <- sort(as.numeric(colnames(final.table)[numeric.named.columns]))
+    numeric.named.columns <- match(as.character(numeric.named.columns), colnames(final.table))
+    final.table <- final.table[,c(alfa.named.columns, numeric.named.columns)]
+  })
 
 
   # Return ####
