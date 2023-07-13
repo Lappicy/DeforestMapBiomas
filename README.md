@@ -15,19 +15,19 @@ The data folder has 2 subdirectories. One, "GPKG", has a geopackage file with th
 
 ### Correlation analysis with gg.deforestation.cor function
 Below it is shown the correlation of different known classes in Uaça 1 and 2:
-![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Deforestation%20vs%20Growth.png?raw=true)
+![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Results/Deforestation%20vs%20Growth.png?raw=true)
 
 ### Output map from the mesh.map function
 Lastely, we bring the result of the outputed map for the acumulated deforestation in Uaça 1 and 2:
-![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Map%20acumulated%20deforestation.png?raw=true)
+![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Results/Map%20acumulated%20deforestation.png?raw=true)
 
 ## Other practical examples
 The code proposed in here was widely teste throughout the Amazon region, using many different spatial resolutions. Below we bring also some examples of possible outputs, using the Guiana Shield Region. The first image shows the gridded map, which encompasses 6 countries (Brazil, Columbia, French Guiana, Guyana, Suriname and Venezuela) that belongs to the Guiana Shield Region. We may see through this map where the deforestation is more agressive, as well as showing the behaviour for other 3 known classes from MapBiomas. In addition to the different countries, we also used (with a specific geospatial file) where the protected areas where - and, therefore, giving a more important information for the deforestation patterns.
 
-![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Others/Guiana%20Shield%20Example.png?raw=true)
+![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Results/Guiana%20Shield%20Example.png?raw=true)
 
 We could take a closer look to the correlations for Brazil. Where the function automatically gives us the highest correlation coefficient found between deforestation and the other classes (+0.70 for Pasture).
 
-![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Others/Brazil%20example.png?raw=true)
+![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Results/Brazil%20example.png?raw=true)
 
 

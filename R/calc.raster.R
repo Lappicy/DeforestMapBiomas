@@ -10,7 +10,10 @@ calc.raster <- function(geo.file, tif.file, year.used = NULL,
   # Function itself ####
   # Open geo.file and tif
   geo.file <- read.geo(geo.file)
-  tif.file <- raster::raster(tif.file)
+  if(class(tif.file) != "raster") tif.file <- raster::raster(tif.file)
+
+  # Make sure the projections are the same
+  geo.file <- geo.tif.projection(geo.file = geo.file, tif.file = tif.file)
 
   # Change the geo.file to only data.frame (lighter)
   geo.df <- sf::st_drop_geometry(geo.file)
