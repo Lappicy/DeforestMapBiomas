@@ -47,24 +47,28 @@ count.classes <- function(proxy.table,
 
   # Function itself ####
   # Which columns are contained in each class (general)
-  col.num.forest <-
-    which(as.numeric(colnames(proxy.table)) %in% num.forest)
-  col.num.non.forest <-
-    which(as.numeric(colnames(proxy.table)) %in% num.non.forest)
-  col.num.water <-
-    which(as.numeric(colnames(proxy.table)) %in% num.water)
-  col.num.others <-
-    which(as.numeric(colnames(proxy.table)) %in% num.others)
+  suppressWarnings({
+    col.num.forest <-
+      which(as.numeric(colnames(proxy.table)) %in% num.forest)
+    col.num.non.forest <-
+      which(as.numeric(colnames(proxy.table)) %in% num.non.forest)
+    col.num.water <-
+      which(as.numeric(colnames(proxy.table)) %in% num.water)
+    col.num.others <-
+      which(as.numeric(colnames(proxy.table)) %in% num.others)
+  })
 
   # Which columns are contained in each class (specific)
-  col.num.urban <-
-    which(as.numeric(colnames(proxy.table)) %in% num.urban)
-  col.num.mining <-
-    which(as.numeric(colnames(proxy.table)) %in% num.mining)
-  col.num.pasture <-
-    which(as.numeric(colnames(proxy.table)) %in% num.pasture)
-  col.num.agriculture <-
-    which(as.numeric(colnames(proxy.table)) %in% num.agriculture)
+  suppressWarnings({
+    col.num.urban <-
+      which(as.numeric(colnames(proxy.table)) %in% num.urban)
+    col.num.mining <-
+      which(as.numeric(colnames(proxy.table)) %in% num.mining)
+    col.num.pasture <-
+      which(as.numeric(colnames(proxy.table)) %in% num.pasture)
+    col.num.agriculture <-
+      which(as.numeric(colnames(proxy.table)) %in% num.agriculture)
+  })
 
 
   # Sum the values if the defined columns into a new column created
