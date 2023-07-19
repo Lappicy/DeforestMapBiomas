@@ -1,5 +1,5 @@
-# DeforestMapBiomas
-Deforestation analysis on MapBiomas Data
+# LandScriptDeforestMap
+Deforestation analysis on classified images
 
 The following code is aimed to help with deforestation analysis, using classified images - such as from MapBiomas.
 
@@ -12,10 +12,10 @@ To install and open the *devtools* package using the command line in R, run the 
 install.packages("devtools")
 library(devtools)
 ```
-If the package (*devtools*) ir properly installed and opened, you must then install, and load, the *DeforestMapBiomas* package through the github link with the code:
+If the package (*devtools*) ir properly installed and opened, you must then install, and load, the *LandScriptDeforestMap* package through the github link with the code:
 ```r
-devtools::install_github("Lappicy/DeforestMapBiomas")
-library(DeforestMapBiomas)
+devtools::install_github("Lappicy/LandScriptDeforestMap")
+library(LandScriptDeforestMap)
 ```
 
 ## Usage
