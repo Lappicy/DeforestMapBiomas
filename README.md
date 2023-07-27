@@ -54,13 +54,13 @@ FinalAnalysis <-
                   MAPBIOMAS = 7.1)
 ```
 
-| ID_mesh |	Pais | Categoria | Nome | Year | Deforestation | Reforestation | Growth_Urban | Growth_Mining | Growth_Pasture | Growth_Agriculture | Forest | NonForest | Water | Others | Urban | Mining | Pasture | Agriculture | 0 | 11 | 12 | 15 | 3 | 33 | 4 | 41 |
+| ID_mesh |	Country | Category | Name | Year | Deforestation | Reforestation | Growth_Urban | Growth_Mining | Growth_Pasture | Growth_Agriculture | Forest | NonForest | Water | Others | Urban | Mining | Pasture | Agriculture | 0 | 11 | 12 | 15 | 3 | 33 | 4 | 41 |
 | :----------: | :----------: | :--------------------: | :--------------------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: | :----------: |
-| 1	| Brasil | Terra Indígena | Uaçá I e II | 1985 | NA | NA | NA | NA | NA | NA | 10.6983 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | NA | NA | 10.6983 | NA | NA | NA |
-| 1 |	Brasil | Terra Indígena | Uaçá I e II | 1986 | 0 | 0 | 0 | 0 | 0 | 0 | 10.6983 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | NA | NA | 10.6983 | NA | NA | NA |
+| 1	| Brazil | Indigenous Land | Uaçá I e II | 1985 | NA | NA | NA | NA | NA | NA | 10.6983 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | NA | NA | 10.6983 | NA | NA | NA |
+| 1 |	Brazil | Indigenous Land | Uaçá I e II | 1986 | 0 | 0 | 0 | 0 | 0 | 0 | 10.6983 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | NA | NA | 10.6983 | NA | NA | NA |
 | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
-| 222 | Brasil | Terra Indígena |	Uaçá I e II |	2020 | 0 | 0 | 0 | 0 | 0 | 0 | 0.1008 | 0.234 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | 0.234 | NA | 0.1008 | NA | NA | NA |
-| 222 | Brasil | Terra Indígena |	Uaçá I e II |	2021 | 0 | 0 | 0 | 0 | 0 | 0 | 0.1008 | 0.234 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | 0.234 | NA | 0.1008 | NA | NA | NA |
+| 222 | Brazil | Indigenous Land |	Uaçá I e II |	2020 | 0 | 0 | 0 | 0 | 0 | 0 | 0.1008 | 0.234 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | 0.234 | NA | 0.1008 | NA | NA | NA |
+| 222 | Brazil | Indigenous Land |	Uaçá I e II |	2021 | 0 | 0 | 0 | 0 | 0 | 0 | 0.1008 | 0.234 | 0 | 0 | 0 | 0 | 0 | 0 | NA | NA | 0.234 | NA | 0.1008 | NA | NA | NA |
 
 ### Correlation analysis with gg.deforestation.cor function
 Below it is shown the correlation of different known classes in Uaça 1 and 2. To run this one must write:
