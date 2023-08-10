@@ -130,23 +130,55 @@ gg.deforestation.cor <-
 
 
 # Mapa para um ano em específico e uma classe específica ####
-mesh.map <- function(mesh.data,
+mesh.map <- function(mesh.data, study.area,
                      class = "Deforestation",
                      year.used = "all",
-                     col.limits = c(0, 1, 2, 5), #c(0, 30, 60, 100),
+                     col.limits = c(0, 1, 2, 5),
                      col.used = c("white", "#E5E200", "#FC780D", "red", "darkred"),
-                     save.map.as,
-                     map.height = 3000, map.width = 2000, map.units = "px"){
+                     save.map.as = NULL,
+                     map.height = 3000, map.width = 2000, map.units = "px",
+                     grid.color = "transparent",
+                     classes.column = NULL,
+                     classes.col = c("pink", "purple", "#E1AD01", "darkgreen", "lightgreen"),
+                     highlight = NULL){
   
   # Libraries used ####
-  require(sf)
+  require(dplyr)
   require(ggplot2)
   require(ggspatial)
+  require(sf)
+  require(nngeo)
   
   
   # Prepare data ####
   mesh.data <- read.geo(mesh.data)
+  study.area <- read.geo(study.area)
+  whole.area <- nngeo::st_remove_holes(sf::st_as_sf(st_union(study.area)))
 
+  
+  # If there is a highlights parameter, create three desired masks
+  if(!(is.null(highlight) & is.null(classes.column))){
+    highlight.mask.col <-
+      which(colnames(study.area) == classes.column)
+    highlight.mask.row <-
+      which(sf::st_drop_geometry(study.area)[,highlight.mask.col] == highlight)
+    
+    # highlight mask
+    highlight.mask <- study.area$geometry[highlight.mask.row]
+    highlight.mask <- sf::st_as_sf(sf::st_union(highlight.mask))
+    
+    # Difference mask
+    sf::sf_use_s2(FALSE)
+    difference.mask <- sf::st_difference(x = whole.area, y = highlight.mask)
+    sf::sf_use_s2(TRUE)
+    
+    # Study area mask
+    difference.col <- which(colnames(study.area) == classes.column)
+    difference.row <- which(sf::st_drop_geometry(study.area)[,difference.col] == highlight)
+    study.mask <- study.area #study.area[-difference.row,]
+    study.mask$geometry[difference.row] <- st_point()
+  }
+  
   # Change the column from the class to "value" to use in the function
   num.column.value <- which(colnames(mesh.data) == class)
   colnames(mesh.data)[num.column.value] <- "Value"
@@ -208,17 +240,29 @@ mesh.map <- function(mesh.data,
   # If there are no values pre defines in col.limits
   if(!exists("col.limits")) mesh.data$Value_Class <- mesh.data$Value
 
-  
+
   # GGPLOT2 ####
   map.internal <-
     ggplot() +
     
     # Plot the choosen class
-    geom_sf(data = mesh.data, aes(fill = Value_Class), color = "black") +
+    geom_sf(data = mesh.data, aes(fill = Value_Class), color = grid.color) +
+    
+    # Plot the study mask if it exists
+    {if(!(is.null(highlight) & is.null(classes.column))){
+      geom_sf(data = study.mask, fill = classes.col,
+              color = "black")}} +
+    
+    # Plot the difference mask if it exists
+    {if(!(is.null(highlight) & is.null(classes.column))){
+      geom_sf(data = difference.mask, fill = "white", alpha = 0.7,
+              color = "black")}} +
+    
+    # Plot the study area
+    geom_sf(data = study.area, fill = "transparent", color = "black") +
     
     # Plot the outline as a black line
-    geom_sf(data = st_union(mesh.data), fill = "transparent",
-            color = "black", lwd = 1) +
+    geom_sf(data = whole.area, fill = "transparent", color = "black", lwd = 1) +
     
     # Class coloration if there are no col.limits or col.used argument
     {if(!all(c(exists("col.limits"), exists("col.used")))){
@@ -228,6 +272,7 @@ mesh.map <- function(mesh.data,
     {if(all(c(exists("col.limits"), exists("col.used")))){
       scale_fill_manual(values = col.used,
                         labels = col.used.label)}} +
+
     
     # Title for map, along with x and y axis and legend
     labs(title = paste0(class, " in ", year.used),
@@ -244,7 +289,8 @@ mesh.map <- function(mesh.data,
     ggspatial::annotation_scale(location = "br",
                                 bar_cols = c("black", "white")) +
     ggspatial::annotation_north_arrow(location = "tl", which_north = "true",
-                                      pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
+                                      height = unit(1, "cm"),  width = unit(1, "cm"),
+                                      pad_x = unit(0.3, "cm"), pad_y = unit(0.3, "cm"),
                                       style = north_arrow_orienteering(fill = c("black", "white"),
                                                                        line_col = "grey20")) +
     
