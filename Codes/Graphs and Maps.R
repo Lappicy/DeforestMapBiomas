@@ -156,8 +156,11 @@ mesh.map <- function(mesh.data, study.area,
   whole.area <- nngeo::st_remove_holes(sf::st_as_sf(st_union(study.area)))
 
   
-  # If there is a highlights parameter, create three desired masks
-  if(!(is.null(highlight) & is.null(classes.column))){
+  # If there are the highlights + classes.column + study.area parameter,
+  # create three desired masks
+  extra.masks <- all(!is.null(highlight), !is.null(classes.column), exists("study.area"))
+  
+  if(extra.masks){
     highlight.mask.col <-
       which(colnames(study.area) == classes.column)
     highlight.mask.row <-
@@ -249,17 +252,18 @@ mesh.map <- function(mesh.data, study.area,
     geom_sf(data = mesh.data, aes(fill = Value_Class), color = grid.color) +
     
     # Plot the study mask if it exists
-    {if(!(is.null(highlight) & is.null(classes.column))){
+    {if(extra.masks){
       geom_sf(data = study.mask, fill = classes.col,
               color = "black")}} +
     
     # Plot the difference mask if it exists
-    {if(!(is.null(highlight) & is.null(classes.column))){
+    {if(extra.masks){
       geom_sf(data = difference.mask, fill = "white", alpha = 0.7,
               color = "black")}} +
     
-    # Plot the study area
-    geom_sf(data = study.area, fill = "transparent", color = "black") +
+    # Plot the study area if it exists
+    {if(extra.masks){
+      geom_sf(data = study.area, fill = "transparent", color = "black")}} +
     
     # Plot the outline as a black line
     geom_sf(data = whole.area, fill = "transparent", color = "black", lwd = 1) +
@@ -302,15 +306,17 @@ mesh.map <- function(mesh.data, study.area,
     guides(fill = guide_legend(byrow = TRUE))
   
   
-  # Save graph ####
-  ggplot2::ggsave(filename = save.map.as,
-                  plot = map.internal,
-                  height = map.height, width = map.width,
-                  units = map.units, dpi = 300)
+  # Save graph (if not NULL) ####
+  if(!is.null(save.map.as)){
+    ggplot2::ggsave(filename = save.map.as,
+                    plot = map.internal,
+                    height = map.height, width = map.width,
+                    units = map.units, dpi = 300)
+  }
 
   
   # Return ####
-  # Returns the map itself if still wants to usee it
+  # Returns the map itself if still wants to use it
   return(map.internal)
 }
 
