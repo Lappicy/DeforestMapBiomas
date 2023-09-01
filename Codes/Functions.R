@@ -393,6 +393,23 @@ count.classes <- function(proxy.table,
     num.pasture <- 15
     num.agriculture <- c(9, 18, 19, 20, 36, 39, 40, 41, 46, 47, 48, 62) 
   }
+  # MAPBIOMAS 8
+  if(MAPBIOMAS == 8){
+    # general classes
+    num.forest <- c(1, 3)
+    num.non.forest <- c(4, 5, 6, 49,
+                        10, 11, 12, 32, 29, 50, 13,
+                        14, 15, 18, 19, 39, 20, 40, 62, 41, 36, 46, 47, 35, 48, 9, 21,
+                        22, 23, 24, 30, 25)
+    num.water <- c(26, 31, 33)
+    num.others <- c(0, 27)
+    
+    # non forrest detailed
+    num.urban <- 24
+    num.mining <- 30
+    num.pasture <- 15
+    num.agriculture <- c(9, 18, 19, 20, 36, 39, 40, 41, 46, 47, 48, 62) 
+  }
   
   
   # Function itself ####
