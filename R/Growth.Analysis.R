@@ -25,9 +25,17 @@ Growth.Analysis <-
     # Calculate the classes for each raster file
     for(i in 1:length(tif.files.names)){
 
+    if(substr(tif.files.names[i],
+              nchar(tif.files.names[i]) -  3,
+              nchar(tif.files.names[i])) == "tiff"){
+      year.proxy <- substr(tif.files.names[i],
+                           nchar(tif.files.names[i]) - 8,
+                           nchar(tif.files.names[i]) - 5)
+    } else{
       year.proxy <- substr(tif.files.names[i],
                            nchar(tif.files.names[i]) - 7,
                            nchar(tif.files.names[i]) - 4)
+    }
 
       raster.data.proxy <- calc.raster(geo.file = mesh.geo.file,
                                        tif.file = tif.files.used[[i]],
