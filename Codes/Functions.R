@@ -137,17 +137,9 @@ raster.Classes <- function(tif.files,
     closeAllConnections()
     
     # What is the file name
-    if(substr(tif.files.names[i],
-              nchar(tif.files.names[i]) -  3,
-              nchar(tif.files.names[i])) == "tiff"){
-      year.proxy <- substr(tif.files.names[i],
-                           nchar(tif.files.names[i]) - 8,
-                           nchar(tif.files.names[i]) - 5)
-    } else{
-      year.proxy <- substr(tif.files.names[i],
-                           nchar(tif.files.names[i]) - 7,
-                           nchar(tif.files.names[i]) - 4)
-    }
+    year.proxy <- as.numeric(substr(tif.files[i.raster.Classes],
+                                    nchar(tif.files[i.raster.Classes]) - 7,
+                                    nchar(tif.files[i.raster.Classes]) - 4))
     
     # Pull the tif image as a raster file
     tif.raster <- raster::raster(tif.files[i.raster.Classes])
@@ -392,23 +384,6 @@ count.classes <- function(proxy.table,
     num.non.forest <- c(4, 5, 49, 10, 11, 12, 32, 29, 50, 13,
                           14, 15, 18, 19, 39, 20, 40, 62, 41, 36, 46, 47, 48, 9, 21,
                           22, 23, 24, 30, 25)
-    num.water <- c(26, 31, 33)
-    num.others <- c(0, 27)
-    
-    # non forrest detailed
-    num.urban <- 24
-    num.mining <- 30
-    num.pasture <- 15
-    num.agriculture <- c(9, 18, 19, 20, 36, 39, 40, 41, 46, 47, 48, 62) 
-  }
-  # MAPBIOMAS 8
-  if(MAPBIOMAS == 8){
-    # general classes
-    num.forest <- c(1, 3)
-    num.non.forest <- c(4, 5, 6, 49,
-                        10, 11, 12, 32, 29, 50, 13,
-                        14, 15, 18, 19, 39, 20, 40, 62, 41, 36, 46, 47, 35, 48, 9, 21,
-                        22, 23, 24, 30, 25)
     num.water <- c(26, 31, 33)
     num.others <- c(0, 27)
     
@@ -823,23 +798,6 @@ Growth.Analysis <-
         num.pasture <- 15
         num.agriculture <- c(9, 18, 19, 20, 36, 39, 40, 41, 46, 47, 48, 62) 
       }
-      # MAPBIOMAS 8
-      if(MAPBIOMAS == 8){
-        # general classes
-        num.forest <- c(1, 3)
-        num.non.forest <- c(4, 5, 6, 49,
-                            10, 11, 12, 32, 29, 50, 13,
-                            14, 15, 18, 19, 39, 20, 40, 62, 41, 36, 46, 47, 35, 48, 9, 21,
-                            22, 23, 24, 30, 25)
-        num.water <- c(26, 31, 33)
-        num.others <- c(0, 27)
-        
-        # non forrest detailed
-        num.urban <- 24
-        num.mining <- 30
-        num.pasture <- 15
-        num.agriculture <- c(9, 18, 19, 20, 36, 39, 40, 41, 46, 47, 48, 62) 
-      }
       
       
       # Function itself ####
@@ -1014,17 +972,9 @@ Growth.Analysis <-
     # Calculate the classes for each raster file
     for(i in 1:length(tif.files.names)){
       
-    if(substr(tif.files.names[i],
-              nchar(tif.files.names[i]) -  3,
-              nchar(tif.files.names[i])) == "tiff"){
-      year.proxy <- substr(tif.files.names[i],
-                           nchar(tif.files.names[i]) - 8,
-                           nchar(tif.files.names[i]) - 5)
-    } else{
       year.proxy <- substr(tif.files.names[i],
                            nchar(tif.files.names[i]) - 7,
                            nchar(tif.files.names[i]) - 4)
-    }
       
       raster.data.proxy <- calc.raster(geo.file = mesh.geo.file,
                                        tif.file = tif.files.names[i],
