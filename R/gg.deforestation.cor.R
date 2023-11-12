@@ -1,128 +1,146 @@
 # Graph for Deforestation x Other classes growth ####
 gg.deforestation.cor <-
   function(proxy.table,
-           type.one = "Growth",
-           type.two = "Deforestation",
-           color.one = c("purple", "grey50", "#EA9999", "darkorange"),
-           color.two = "darkgreen",
+           comparison.name = "Growth",
+           comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
            save.as = "Results/Deforestation vs Growth.png",
-           title.name = "Analysis for Uaça 1 e 2",
-           different.groups = NULL){
+           title.name = "Analysis for Caverna do Maroaga",
+           different.groups = NULL,
+           ...){
 
-    # Libraries required ####
+    # Dependencies ####
     require(ggplot2)
+    require(sf)
     require(stats)
 
 
     # Function itself ####
-    # Prepare data ####
-    # Make sure the data is in a data.frame format.
-    proxy.table <- as.data.frame(proxy.table)
+    {
+      # Get the dots (...) information ####
+      dots2 <- list(...)
 
-    # Make sure the Year column is numeric
-    proxy.table$Year <- as.numeric(proxy.table$Year)
-
-    # Which columns have "type.one" or "type.two" in their names
-    columns.type.one <-
-      colnames(proxy.table)[grep(type.one, colnames(proxy.table))]
-
-    columns.type.one.names <- substr(x = columns.type.one,
-                                     start = nchar(type.one) + 2,
-                                     stop = nchar(columns.type.one))
-
-    colnames(proxy.table)[colnames(proxy.table) %in% columns.type.one] <-
-      columns.type.one.names
-
-    columns.type.one <- columns.type.one.names
-
-    columns.type.two <-
-      colnames(proxy.table)[grep(type.two, colnames(proxy.table))]
+      if(any(!(names(dots2) == "width")) | is.null(names(dots2))) width.int <- 3000
+      if(any(!(names(dots2) == "height")) | is.null(names(dots2))) height.int <- 1500
+      if(any(!(names(dots2) == "units")) | is.null(names(dots2))) units.int <- "px"
+      if(any(!(names(dots2) == "dpi")) | is.null(names(dots2))) dpi.int <- 300
 
 
-    # Correlation analysis ####
-    # Only get type.one and type.two columns
-    cor.table <- proxy.table[,which(colnames(proxy.table) %in%
-                                      c(columns.type.two, columns.type.one))]
+      # Prepare data ####
+      # Arguments for color and deforestation analysis
+      comparison.deforest = "Deforestation"
+      comparison.color.deforest = "darkgreen"
 
-    # Remove any blank data (NA)
-    cor.table <- na.omit(cor.table)
+      # Make sure the data is in a data.frame format.
+      if(any(class(proxy.table) == "sf")){
+        proxy.table <- sf::st_drop_geometry(proxy.table)
+      }
+      proxy.table <- as.data.frame(proxy.table)
 
-    # Correlate the data
-    suppressWarnings(cor.data <- stats::cor(cor.table)[,1])
+      # Make sure the Year column is numeric
+      proxy.table$Year <- as.numeric(proxy.table$Year)
 
-    # Which class has the higher correlation
-    cor.information <-
-      round(max(abs(cor.data[2:length(cor.data)]), na.rm = TRUE), digits = 2)
+      # Columns that have "comparison.name" or "Deforestation" in their names
+      columns.comparison <-
+        colnames(proxy.table)[grep(comparison.name, colnames(proxy.table))]
 
-    # Write a + or - sign accordingly
-    ifelse(max(abs(cor.data[2:length(cor.data)]), na.rm = TRUE) ==
-             max(cor.data[2:length(cor.data)], na.rm = TRUE),
-           cor.information <- paste0("+", cor.information),
-           cor.information <- paste0("-", cor.information))
+      columns.comparison.names <- substr(x = columns.comparison,
+                                         start = nchar(comparison.name) + 2,
+                                         stop = nchar(columns.comparison))
 
-    # Make sure it always has 5 characters
-    if(nchar(cor.information) == 4) cor.information <- paste0(cor.information, "0")
-
-    # Name the values
-    names(cor.information) <-
-      columns.type.one[which.max(abs(cor.data[2:length(cor.data)]))]
+      columns.Deforestation <-
+        colnames(proxy.table)[grep(comparison.deforest, colnames(proxy.table))]
 
 
-    # Prepare table for ggplot2 ####
-    proxy.table <-
-      tidyr::pivot_longer(data = proxy.table,
-                          cols = c(columns.type.two, columns.type.one),
-                          names_to = "Classes",
-                          values_to = "NumValue") |>
-      dplyr::group_by_at(c("Year", different.groups, "Classes")) |>
-      dplyr::reframe(NumValue = sum(NumValue, na.rm = TRUE)) |>
-      as.data.frame()
+      # Correlation analysis ####
+      # Only get type.one and type.two columns
+      cor.table <- proxy.table[,which(colnames(proxy.table) %in%
+                                        c(columns.comparison, columns.Deforestation))]
 
-    # Alfabetical order of type.one and type.two
-    order.types <- order(c(columns.type.one, columns.type.two))
+      # Remove any blank data (NA)
+      cor.table <- na.omit(cor.table)
 
+      # Correlate the data
+      suppressWarnings(cor.data <- stats::cor(cor.table)[,1])
 
-    # GGPLOT2 graph ####
-    gg.internal <-
+      # Which class has the higher correlation
+      cor.information <-
+        round(max(abs(cor.data[2:length(cor.data)]), na.rm = TRUE), digits = 2)
 
-      # Data being plotted
-      ggplot2::ggplot(data = proxy.table,
-                      aes(x = Year, y = NumValue, color = Classes)) +
+      # Write a + or - sign accordingly
+      ifelse(max(abs(cor.data[2:length(cor.data)]), na.rm = TRUE) ==
+               max(cor.data[2:length(cor.data)], na.rm = TRUE),
+             cor.information <- paste0("+", cor.information),
+             cor.information <- paste0("-", cor.information))
 
-      # Plot the deforestation only
-      ggplot2::geom_line(data = proxy.table[proxy.table$Classes %in%
-                                              columns.type.two,],
-                         color = color.two, linewidth = 1, alpha = 0.5) +
+      # Make sure it always has 5 characters
+      if(nchar(cor.information) == 4) cor.information <- paste0(cor.information, "0")
 
-      # Plot other classes
-      ggplot2::geom_line(linewidth = 1, alpha = 0.3) +
-      ggplot2::geom_point(alpha = 0.5) +
-
-      ggplot2::scale_color_manual(values = c(color.one, color.two)[order.types]) +
-
-      ggplot2::labs(title = title.name,
-                    subtitle = paste0("Greatest correlation with ",
-                                      names(cor.information), " (",
-                                      cor.information, ")"),
-                    x = "Year", y = bquote("[" ~ km^2 ~"]"), color = "Class:") +
-      ggplot2::scale_y_continuous(labels = function(x) format(x, big.mark = ",",
-                                                              decimal.mark = ".",
-                                                              scientific = F)) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = "top",
-                     legend.text = element_text(size = 12, color = "black"),
-                     legend.justification = "left",
-                     legend.box.just = "left",
-                     title = element_text(size = 12, color = "black", face = "bold"),
-                     text = element_text(size = 12, color = "black"),
-                     axis.text = element_text(size = 12, color = "black"))
+      # Name the values
+      names(cor.information) <-
+        columns.comparison.names[which.max(abs(cor.data[2:length(cor.data)]))]
 
 
-    # save where the user setted it to
-    ggplot2::ggsave(filename = save.as, plot = gg.internal,
-                    width = 3000, height = 1500, units = "px", dpi = 300)
+      # Prepare table for ggplot2 ####
+      proxy.table <-
+        tidyr::pivot_longer(data = proxy.table,
+                            cols = c(columns.Deforestation, columns.comparison),
+                            names_to = "Classes",
+                            values_to = "NumValue") |>
+        dplyr::group_by_at(c("Year", different.groups, "Classes")) |>
+        dplyr::reframe(NumValue = sum(NumValue, na.rm = TRUE)) |>
+        as.data.frame()
+
+      # Change the column "classes"
+      proxy.table$Classes[proxy.table$Classes != comparison.deforest] <-
+        columns.comparison.names[na.omit(base::match(proxy.table$Classes,
+                                                     columns.comparison))]
+
+      # Transform classes into factors with order
+      proxy.table$Classes <- factor(x = proxy.table$Classes,
+                                    levels = c(columns.Deforestation,
+                                               sort(columns.comparison.names)))
+
+      # GGPLOT2 graph ####
+      gg.internal <-
+
+        # Data being plotted
+        ggplot2::ggplot(data = proxy.table,
+                        aes(x = Year, y = NumValue, color = Classes)) +
+
+        # Plot other classes
+        ggplot2::geom_line(linewidth = 1, alpha = 0.3) +
+        ggplot2::geom_point(alpha = 0.5) +
+
+        ggplot2::scale_color_manual(values = c(comparison.color.deforest,
+                                               comparison.color[order(columns.comparison.names)])) +
+
+        ggplot2::labs(title = title.name,
+                      subtitle = paste0("Greatest correlation with ",
+                                        names(cor.information), " (",
+                                        cor.information, ")"),
+                      x = "Year", y = bquote("[" ~ km^2 ~"]"), color = "Class:") +
+        ggplot2::scale_y_continuous(labels = function(x) format(x, big.mark = ",",
+                                                                decimal.mark = ".",
+                                                                scientific = F)) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(legend.position = "top",
+                       legend.text = element_text(size = 12, color = "black"),
+                       legend.justification = "left",
+                       legend.box.just = "left",
+                       title = element_text(size = 12, color = "black", face = "bold"),
+                       text = element_text(size = 12, color = "black"),
+                       axis.text = element_text(size = 12, color = "black"))
 
 
-    # Returns (NULL) ####
-    return(NULL)
-}
+      # Save the ggplot2 in "save.as" (with 3000 x 1500pixel with 300 dpi) ####
+      ggplot2::ggsave(filename = save.as, plot = gg.internal,
+                      width = width.int, height = height.int,
+                      units = units.int, dpi = dpi.int)
+
+
+    }
+
+    # Returns ####
+    # Returns the graph itself
+    return(gg.internal)
+  }

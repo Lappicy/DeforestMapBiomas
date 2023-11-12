@@ -4,65 +4,41 @@ count.growth <- function(proxy.table,
                          output.name,
                          column.used = NULL){
 
-  # Function ifself ####
-  # Organize data ####
-  # Number of diferent columns used
-  n.types.table <- unique(proxy.table[,column.used])
-
-  # Create empty columns
-  proxy.table$Deforestation <- NA
-  proxy.table$Reforestation <- NA
-  proxy.table$Growth_Agriculture <- NA
-  proxy.table$Growth_Mining <- NA
-  proxy.table$Growth_Pasture <- NA
-  proxy.table$Growth_Urban <- NA
-
-  # Columns that we want to use later
-  suppressWarnings({
-    col.num <- which(!is.na(as.numeric(colnames(proxy.table))))
-  })
-
-  first.col <- 1:(min(col.num) - 1)
-
-  # Reorder columns
-  proxy.table <- proxy.table[, c(colnames(proxy.table)[first.col],
-                                 "Deforestation", "Reforestation",
-                                 "Growth_Urban", "Growth_Mining",
-                                 "Growth_Pasture", "Growth_Agriculture",
-                                 "Forest", "NonForest", "Water", "Others",
-                                 "Urban", "Mining", "Pasture", "Agriculture",
-                                 sort(colnames(proxy.table)[col.num]))]
+  # Dependencies ####
+  require(sf)
 
 
-  # Calculate growth ####
+  # Function itself ####
+  # Calculate GROWTH for...
+
   # DEFORESTATION
-  proxy.table[2:nrow(proxy.table), "Deforestation"] <-
-    base::diff(proxy.table[, "Forest"], lag = 1) * (-1)
+  proxy.table$Deforestation[2:nrow(proxy.table)] <-
+    base::diff(proxy.table[["Forest"]], lag = 1) * (-1)
 
   # REFORESTATION (when deforestation is negative)
-  proxy.table[, "Reforestation"] <-
-    ifelse(is.na(proxy.table[, "Deforestation"]) |
-             proxy.table[, "Deforestation"] < 0,
-           proxy.table[, "Deforestation"] * (-1),
+  proxy.table$Reforestation <-
+    ifelse(is.na(proxy.table[["Deforestation"]]) |
+             proxy.table[["Deforestation"]] < 0,
+           proxy.table[["Deforestation"]] * (-1),
            0)
 
   # GROWTH AGRICULTURE
-  proxy.table[2:nrow(proxy.table), "Growth_Agriculture"] <-
-    base::diff(proxy.table[, "Agriculture"], lag = 1)
+  proxy.table$Growth_Agriculture[2:nrow(proxy.table)] <-
+    base::diff(proxy.table[["Agriculture"]], lag = 1)
 
   # GROWTH MINING
-  proxy.table[2:nrow(proxy.table), "Growth_Mining"] <-
-    base::diff(proxy.table[, "Mining"], lag = 1)
+  proxy.table$Growth_Mining[2:nrow(proxy.table)] <-
+    base::diff(proxy.table[["Mining"]], lag = 1)
 
   # GROWTH PASTURE
-  proxy.table[2:nrow(proxy.table), "Growth_Pasture"] <-
-    base::diff(proxy.table[, "Pasture"], lag = 1)
+  proxy.table$Growth_Pasture[2:nrow(proxy.table)] <-
+    base::diff(proxy.table[["Pasture"]], lag = 1)
 
   # GROWTH URBAN
-  proxy.table[2:nrow(proxy.table), "Growth_Urban"] <-
-    base::diff(proxy.table[, "Urban"], lag = 1)
+  proxy.table$Growth_Urban[2:nrow(proxy.table)] <-
+    base::diff(proxy.table[["Urban"]], lag = 1)
 
-  # Primeiro ano sempre NA
+  # First year as NA always!
   proxy.table[(proxy.table$Year == min(proxy.table$Year)),
               c("Deforestation", "Reforestation",
                 "Growth_Urban", "Growth_Mining",
@@ -75,19 +51,43 @@ count.growth <- function(proxy.table,
   proxy.table[which(proxy.table$Growth_Pasture < 0), "Growth_Pasture"] <- 0
   proxy.table[which(proxy.table$Growth_Urban < 0), "Growth_Urban"] <- 0
 
+  # Reorganize data
+  # Columns that we want to use later
+  suppressWarnings(col.num <- which(!is.na(as.numeric(colnames(proxy.table)))))
+  first.col <- 1:(min(col.num) - 1)
 
-  # Save two files/tables as a .txt file####
+  # Reorder columns
+  proxy.table <- proxy.table[, c(colnames(proxy.table)[first.col],
+                                 "Deforestation", "Reforestation",
+                                 "Growth_Urban", "Growth_Mining",
+                                 "Growth_Pasture", "Growth_Agriculture",
+                                 "Forest", "NonForest", "Water", "Others",
+                                 "Urban", "Mining", "Pasture", "Agriculture",
+                                 sort(as.numeric(colnames(proxy.table)[col.num])))]
+
+
+  # Save two files/tables as .txt (text) and two as .gpkg (vector) file ####
   # Save the final complete table
-  write.table(x = proxy.table,
-              file = paste0(output.folder, output.name),
+  write.table(x = st_drop_geometry(proxy.table),
+              file = paste0(output.folder, output.name, ".txt"),
               quote = FALSE, sep = "\t", dec = ".", row.names = FALSE,
               fileEncoding = "UTF-8")
+
+  # Save the final complete table as a .gpkg object (vector)
+  sf::st_write(proxy.table, paste0(output.folder, output.name, ".gpkg"),
+               encoding = "UTF-8", append = FALSE)
 
   # Save the table only with the classes
-  write.table(x = proxy.table[,is.na(as.numeric(colnames(proxy.table)))],
-              file = paste0(output.folder, "Simplified_", output.name),
+  write.table(x = st_drop_geometry(proxy.table[,c(1:which(colnames(proxy.table) ==
+                                                            "Agriculture"))]),
+              file = paste0(output.folder, "Simplified_", output.name, ".txt"),
               quote = FALSE, sep = "\t", dec = ".", row.names = FALSE,
               fileEncoding = "UTF-8")
+
+  # Save the table only with the classes as a .gpkg object (vector)
+  sf::st_write(proxy.table[,c(1:which(colnames(proxy.table) == "Agriculture"))],
+               paste0(output.folder, "Simplified_", output.name, ".gpkg"),
+               encoding = "UTF-8", append = FALSE)
 
 
   # Return ####

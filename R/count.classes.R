@@ -11,6 +11,9 @@ count.classes <- function(proxy.table,
                           num.water = NULL,
                           num.others = NULL){
 
+  # Dependencies ####
+  # This function runs on base R only
+
   # MAPBIOMAS classes ####
   # MAPBIOMAS4
   if(MAPBIOMAS == 4){
@@ -43,50 +46,46 @@ count.classes <- function(proxy.table,
     num.pasture <- 15
     num.agriculture <- c(9, 18, 19, 20, 36, 39, 40, 41, 46, 47, 48, 62)
   }
-  # MAPBIOMAS 8
-    if(MAPBIOMAS == 8){
-      # general classes
-      num.forest <- c(1, 3)
-      num.non.forest <- c(4, 5, 6, 49,
-                          10, 11, 12, 32, 29, 50, 13,
-                          14, 15, 18, 19, 39, 20, 40, 62, 41, 36, 46, 47, 35, 48, 9, 21,
-                          22, 23, 24, 30, 25)
-      num.water <- c(26, 31, 33)
-      num.others <- c(0, 27)
-      
-      # non forrest detailed
-      num.urban <- 24
-      num.mining <- 30
-      num.pasture <- 15
-      num.agriculture <- c(9, 18, 19, 20, 36, 39, 40, 41, 46, 47, 48, 62) 
-    }
+  # MAPBIOMAS 8.0
+  if(MAPBIOMAS == 8){
+    # general classes
+    num.forest <- c(1, 3)
+    num.non.forest <- c(4, 5, 6, 49, 10, 11, 12, 32, 29, 50, 13,
+                        14, 15, 18, 19, 39, 20, 40, 62, 41, 36, 46, 47, 35, 48, 9, 21,
+                        22, 23, 24, 30, 25)
+    num.water <- c(26, 31, 33)
+    num.others <- c(0, 27)
 
-  
+    # non forrest detailed
+    num.urban <- 24
+    num.mining <- 30
+    num.pasture <- 15
+    num.agriculture <- c(9, 18, 19, 20, 35, 36, 39, 40, 41, 46, 47, 48, 62)
+  }
+
+
   # Function itself ####
-  # Which columns are contained in each class (general)
   suppressWarnings({
-    col.num.forest <-
-      which(as.numeric(colnames(proxy.table)) %in% num.forest)
-    col.num.non.forest <-
-      which(as.numeric(colnames(proxy.table)) %in% num.non.forest)
-    col.num.water <-
-      which(as.numeric(colnames(proxy.table)) %in% num.water)
-    col.num.others <-
-      which(as.numeric(colnames(proxy.table)) %in% num.others)
+    # Which columns are contained in each class (general)
+    col.num.forest <- which(as.numeric(colnames(proxy.table)) %in% num.forest)
+    col.num.non.forest <- which(as.numeric(colnames(proxy.table)) %in% num.non.forest)
+    col.num.water <- which(as.numeric(colnames(proxy.table)) %in% num.water)
+    col.num.others <- which(as.numeric(colnames(proxy.table)) %in% num.others)
+
+    # Which columns are contained in each class (specific)
+    col.num.urban <- which(as.numeric(colnames(proxy.table)) %in% num.urban)
+    col.num.mining <- which(as.numeric(colnames(proxy.table)) %in% num.mining)
+    col.num.pasture <- which(as.numeric(colnames(proxy.table)) %in% num.pasture)
+    col.num.agriculture <- which(as.numeric(colnames(proxy.table)) %in% num.agriculture)
   })
 
-  # Which columns are contained in each class (specific)
-  suppressWarnings({
-    col.num.urban <-
-      which(as.numeric(colnames(proxy.table)) %in% num.urban)
-    col.num.mining <-
-      which(as.numeric(colnames(proxy.table)) %in% num.mining)
-    col.num.pasture <-
-      which(as.numeric(colnames(proxy.table)) %in% num.pasture)
-    col.num.agriculture <-
-      which(as.numeric(colnames(proxy.table)) %in% num.agriculture)
-  })
-
+  # Other classes columns (name, ID_mesh, year...)
+  col.non.numeric <-
+    c(1:ncol(proxy.table))[!(1:ncol(proxy.table) %in%
+                               c(col.num.forest, col.num.non.forest,
+                                 col.num.water, col.num.others,
+                                 col.num.urban, col.num.mining,
+                                 col.num.pasture, col.num.agriculture))]
 
   # Sum the values if the defined columns into a new column created
   proxy.table$Forest <-

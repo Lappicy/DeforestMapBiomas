@@ -1,16 +1,25 @@
-# Map for specific year and class ####
+# Map for a specific year and class ####
 mesh.map <- function(mesh.data,
                      class = "Deforestation",
                      year.used = "all",
                      col.limits = c(0, 1, 2, 5), #c(0, 30, 60, 100),
                      col.used = c("white", "#E5E200", "#FC780D", "red", "darkred"),
                      save.map.as,
-                     map.height = 3000, map.width = 2000, map.units = "px"){
+                     ...){
 
-  # Libraries used ####
-  require(sf)
+  # Dependencies ####
   require(ggplot2)
   require(ggspatial)
+  require(sf)
+
+
+  # Get the dots (...) information ####
+  dots2 <- list(...)
+
+  if(any(!(names(dots2) == "width")) | is.null(names(dots2))) width.int <- 3000
+  if(any(!(names(dots2) == "height")) | is.null(names(dots2))) height.int <- 1500
+  if(any(!(names(dots2) == "units")) | is.null(names(dots2))) units.int <- "px"
+  if(any(!(names(dots2) == "dpi")) | is.null(names(dots2))) dpi.int <- 300
 
 
   # Prepare data ####
@@ -78,7 +87,7 @@ mesh.map <- function(mesh.data,
   if(!exists("col.limits")) mesh.data$Value_Class <- mesh.data$Value
 
 
-  # GGPLOT2 ####
+  # Ggplot map ####
   map.internal <-
     ggplot() +
 
@@ -112,7 +121,7 @@ mesh.map <- function(mesh.data,
     # Geographic north + bar scale
     ggspatial::annotation_scale(location = "br",
                                 bar_cols = c("black", "white")) +
-    ggspatial::annotation_north_arrow(location = "tl", which_north = "true",
+    ggspatial::annotation_north_arrow(location = "tr", which_north = "true",
                                       pad_x = unit(0.1, "in"), pad_y = unit(0.1, "in"),
                                       style = north_arrow_orienteering(fill = c("black", "white"),
                                                                        line_col = "grey20")) +
@@ -121,15 +130,18 @@ mesh.map <- function(mesh.data,
     theme_bw() +
     theme(legend.position = "right",
           legend.justification = "top",
-          legend.spacing.y = unit(0.5, "cm")) +
+          legend.spacing.y = unit(0.5, "cm"),
+          legend.text = element_text(color = "black"),
+          text = element_text(color = "black"),
+          axis.text = element_text(color = "black"),
+          title = element_text( color = "black")) +
     guides(fill = guide_legend(byrow = TRUE))
 
 
   # Save graph ####
-  ggplot2::ggsave(filename = save.map.as,
-                  plot = map.internal,
-                  height = map.height, width = map.width,
-                  units = map.units, dpi = 300)
+  ggplot2::ggsave(plot = map.internal, filename = save.map.as,
+                  width = width.int, height = height.int,
+                  units = units.int, dpi = dpi.int)
 
 
   # Return ####

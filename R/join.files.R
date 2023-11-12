@@ -4,7 +4,7 @@ join.files <- function(folder.calc.raster,
                        output.name,
                        column.order = NULL){
 
-  # Libraries required ####
+  # Dependencies ####
   require(dplyr)
 
 

@@ -1,7 +1,7 @@
-# Read geospatial file in R + reproject it ####
+# Read vector (geospatial) file in R + reproject it ####
 read.geo <- function(file.name, projection.wanted = 4326){
 
-  # Libraries needed ####
+  # Dependencies ####
   require(sf)
 
 

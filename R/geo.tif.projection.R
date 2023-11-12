@@ -1,14 +1,11 @@
-# Make sure the projection of geospatial file when working with images ####
+# Ensure the correct projection of vector (geospatial) file ####
 geo.tif.projection <- function(geo.file, tif.file){
 
-  # Libraries used ####
+  # Dependencies ####
   require(sf)
 
 
   # Function itself ####
-  # Read geo.file
-  geo.file <- read.geo(geo.file)
-
   # Projection of both the geospatial and tif files
   tif.projection <- sf::st_crs(tif.file)
   geo.projection <- sf::st_crs(geo.file)

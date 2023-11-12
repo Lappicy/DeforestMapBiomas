@@ -1,8 +1,10 @@
-# Based on a geospatial file, sum all classification of a raster ####
-calc.raster <- function(geo.file, tif.file, year.used = NULL,
+# Based on a vector (geospatial) file, sum all classification of a raster ####
+calc.raster <- function(geo.file,
+                        tif.file,
+                        year.used = NULL,
                         folder.output = "Proxy/"){
 
-  # Libraries used ####
+  # Dependencies ####
   require(sf)
   require(raster)
 
@@ -10,73 +12,79 @@ calc.raster <- function(geo.file, tif.file, year.used = NULL,
   # Function itself ####
   # Open geo.file and tif
   geo.file <- read.geo(geo.file)
-  if(!(class(tif.file) %in% c("raster", "RasterLayer"))) tif.file <- raster::raster(tif.file)
+  tif.file <- raster::raster(tif.file)
 
-  # Make sure the projections are the same
+  # Reproject geo.file if needed
   geo.file <- geo.tif.projection(geo.file = geo.file, tif.file = tif.file)
 
-  # Change the geo.file to only data.frame (lighter)
-  geo.df <- sf::st_drop_geometry(geo.file)
-
   # Do the calculation for each row of this data.frame
-  for(i.calc.raster in 1:nrow(geo.df)){
+  proxy.table <-
+    lapply(st_geometry(geo.file), FUN = function(x.calc.raster){
 
-    # crop the tif.file and create a mask for it
-    tif.crop <- raster::crop(x = tif.file, y = geo.file[i.calc.raster,])
-    tif.mask <- raster::mask(x = tif.crop, mask = geo.file[i.calc.raster,])
+      # Formato apropriado
+      x.calc.raster.sf <- st_as_sf(st_sfc(x.calc.raster, crs = st_crs(geo.file)))
 
-    # Turn the raster into a matrix and get a table with summary data
-    tif.matrix <- raster::as.matrix(tif.mask)
-    tif.classes <- base::table(as.vector(tif.matrix))
+      # crop the tif.file and create a mask for it
+      tif.mask <- raster::mask(x = raster::crop(x = tif.file,
+                                                y = x.calc.raster.sf),
+                               mask = x.calc.raster.sf)
 
-    # Create a data.frame from this
-    tif.df <- data.frame(as.list(tif.classes), check.names = FALSE)
+      # Turn the raster into a matrix and get a table with summary data
+      tif.classes <- as.data.frame(base::table(raster::as.matrix(tif.mask)))
 
-    # Create proxy table to jon geospatial with raster
-    if(nrow(tif.df) > 0) proxy.table <- base::merge(geo.df[i.calc.raster,],
-                                                    tif.df, all = TRUE)
-    if(nrow(tif.df) == 0) proxy.table <- geo.df[i.calc.raster,]
+      # Make it into a data.frame with a column for ID_mesh
+      if(nrow(tif.classes) == 0){
+        tif.df <-
+          data.frame(ID_mesh = geo.file$ID_mesh[geo.file$geom %in% x.calc.raster.sf$x])
+      }
 
-    # Create year column
-    proxy.table$Year <- year.used
+      if(nrow(tif.classes) != 0){
+        tif.df <- data.frame(t(tif.classes[,2]))
+        colnames(tif.df) <- as.character(tif.classes[,1])
+        tif.df$ID_mesh <- geo.file$ID_mesh[geo.file$geom %in% x.calc.raster.sf$x]
+      }
 
-    # Save file to folder.output (if it is not NULL)
-    if(!is.null(folder.output)){
+      # Merge the data.frame with the geo.file (only the specific ID_mesh)
+      proxy.table <- base::merge(geo.file, tif.df, all.x = F, all.y = T)
+      proxy.table$Year <- year.used
+      proxy.table <- proxy.table[,c(ncol(proxy.table), 1:(ncol(proxy.table) - 1))]
 
-      # if the number is less than 10, add three zeros
-      # if the number is less than 100, add two zeros
-      # if the number is less than 1000, add one zero
-      name.calc.raster <-
-        ifelse(i.calc.raster < 10, paste0("000", i.calc.raster),
-               ifelse(i.calc.raster < 100, paste0("00", i.calc.raster),
-                      ifelse(i.calc.raster < 1000, paste0("0", i.calc.raster),
-                             i.calc.raster)))
+      # Save file to folder.output (if it is not NULL)
+      if(!is.null(folder.output)){
 
-      # If the output doesnt exist, create it
-      dir.create(file.path(getwd(), folder.output), showWarnings = FALSE)
+        # if the number is less than 10, add three zeros
+        # if the number is less than 100, add two zeros
+        # if the number is less than 1000, add one zero
+        name.calc.raster <-
+          ifelse(proxy.table$ID_mesh < 10, paste0("000", proxy.table$ID_mesh ),
+                 ifelse(proxy.table$ID_mesh  < 100, paste0("00", proxy.table$ID_mesh ),
+                        ifelse(proxy.table$ID_mesh  < 1000, paste0("0", proxy.table$ID_mesh ),
+                               proxy.table$ID_mesh )))
 
-      # Save the file with the name
-      write.table(x = proxy.table,
-                  file = paste0(folder.output, year.used, "_",
-                                name.calc.raster, ".txt"),
-                  sep = "\t", dec = ".", row.names = FALSE, quote = FALSE,
-                  fileEncoding = "UTF-8")
-    }
+        # If the output doesnt exist, create it
+        dir.create(file.path(getwd(), folder.output), showWarnings = FALSE)
 
-    # Create final table (merge proxys)
-    if(i.calc.raster == 1) final.table <- proxy.table
-    if(i.calc.raster != 1) final.table <- base::merge(final.table, proxy.table,
-                                                      all = TRUE)
-  }
+        # Save the file with the name
+        write.table(x = proxy.table,
+                    file = paste0(folder.output, year.used, "_",
+                                  name.calc.raster, ".txt"),
+                    sep = "\t", dec = ".", row.names = FALSE, quote = FALSE,
+                    fileEncoding = "UTF-8")
+      }
+
+      # Returns the table for that ID_mesh
+      return(proxy.table)
+    })
+
+  # Change the list to a single data.frame with all the columns
+  final.table <- dplyr::bind_rows(proxy.table)
 
   # Reorder columns in an alfa numeric manner
-  suppressWarnings({
-    alfa.named.columns <- which(is.na(as.numeric(colnames(final.table))))
-    numeric.named.columns <- which(!is.na(as.numeric(colnames(final.table))))
-    numeric.named.columns <- sort(as.numeric(colnames(final.table)[numeric.named.columns]))
-    numeric.named.columns <- match(as.character(numeric.named.columns), colnames(final.table))
-    final.table <- final.table[,c(alfa.named.columns, numeric.named.columns)]
-  })
+  alfa.named.columns <- which(is.na(as.numeric(colnames(final.table))))
+  numeric.named.columns <- which(!is.na(as.numeric(colnames(final.table))))
+  numeric.named.columns <- sort(as.numeric(colnames(final.table)[numeric.named.columns]))
+  numeric.named.columns <- match(as.character(numeric.named.columns), colnames(final.table))
+  final.table <- final.table[,c(alfa.named.columns, numeric.named.columns)]
 
 
   # Return ####

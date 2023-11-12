@@ -3,7 +3,7 @@ create.mesh <- function(geo.file,
                         mesh.size = 0.25,
                         mesh.format = "square"){
 
-  # Libraries used ####
+  # Dependencies ####
   require(sf)
 
 
@@ -30,7 +30,7 @@ create.mesh <- function(geo.file,
   mesh.map$ID_mesh <- rownames(mesh.map) <- 1:nrow(mesh.map)
 
   # Change geometry column to "geom"
-  sf::st_geometry(mesh.map) <- "geom"
+  sf::st_geometry(mesh.map) <- "geometry"
 
 
   # Return ####

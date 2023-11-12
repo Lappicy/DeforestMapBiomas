@@ -5,6 +5,12 @@ Growth.Analysis <-
            output.folder, output.name,
            MAPBIOMAS = NULL, PRODES = NULL, ...){
 
+    # Dependencies ####
+    require(dplyr)
+    require(raster)
+    require(sf)
+
+
     # Function itself ####
     # Read geo.file
     geo.file <- read.geo(file.name = geo.file)
@@ -13,41 +19,35 @@ Growth.Analysis <-
     mesh.geo.file <- create.mesh(geo.file = geo.file, mesh.size = mesh.size)
 
     # Get the complete files names where the tif.files are located (tif.folder)
-    if(class(tif.folder) == "character"){
-      tif.files.names <- list.files(tif.folder, full.names = TRUE)
-      tif.files.used <- list.files(tif.folder, full.names = TRUE)
-    }
-    if(class(tif.folder) %in% c("list", "RasterStack")){
-      tif.files.names <- names(tif.folder)
-      tif.files.used <- tif.folder
-    }
+    tif.files.names <- list.files(tif.folder, full.names = TRUE)
 
     # Calculate the classes for each raster file
-    for(i in 1:length(tif.files.names)){
+    raster.data <-
+      lapply(tif.files.names, FUN = function(x.int){
 
-    if(substr(tif.files.names[i],
-              nchar(tif.files.names[i]) -  3,
-              nchar(tif.files.names[i])) == "tiff"){
-      year.proxy <- substr(tif.files.names[i],
-                           nchar(tif.files.names[i]) - 8,
-                           nchar(tif.files.names[i]) - 5)
-    } else{
-      year.proxy <- substr(tif.files.names[i],
-                           nchar(tif.files.names[i]) - 7,
-                           nchar(tif.files.names[i]) - 4)
-    }
+        # Separar oq tiver ponto
+        year.proxy <- strsplit(as.character(x.int), split = ".", fixed = TRUE)
 
-      raster.data.proxy <- calc.raster(geo.file = mesh.geo.file,
-                                       tif.file = tif.files.used[[i]],
-                                       year.used = year.proxy)
+        # pegar o penúltimo elemento (antes do .tif ou .tiff)
+        year.proxy <- sapply(year.proxy, "[[", length(year.proxy[[1]]) - 1)
 
+        # Pegar os últimos 4 caracteres
+        year.proxy <- substr(year.proxy, nchar(year.proxy) - 3, nchar(year.proxy))
 
-      if(i == 1) raster.data <- raster.data.proxy
-      if(i > 1) raster.data <- base::merge(raster.data, raster.data.proxy,
-                                           all = TRUE)
+        # Rodar o calc.raster usando esse ano específico como uma coluna
+        raster.data.proxy <- calc.raster(geo.file = mesh.geo.file,
+                                         tif.file = as.character(x.int),
+                                         year.used = year.proxy)
 
-      remove(year.proxy, raster.data.proxy)
-    }
+        return(raster.data.proxy)
+      })
+
+    # Change the list to a single data.frame with all the columns
+    raster.data <- dplyr::bind_rows(raster.data)
+    raster.data <- raster.data[order(raster.data$ID_mesh),]
+
+    # If the output doesnt exist, create it
+    dir.create(file.path(getwd(), output.folder), showWarnings = FALSE)
 
     # Save this file (because it is time consuming) and remove folder
     write.table(x = raster.data,
@@ -55,7 +55,6 @@ Growth.Analysis <-
                 dec = ".", sep = "\t", quote = F, col.names = T, row.names = F,
                 fileEncoding = "UTF-8")
     unlink("Proxy/", recursive = TRUE)
-
 
     # Transform pixel to km2
     raster.data.km2 <- pixel.to.km2(proxy.table = raster.data)
@@ -70,22 +69,7 @@ Growth.Analysis <-
                                            output.folder = output.folder,
                                            output.name = output.name)
 
-    # Make the df to geopackage
-    final.table <- base::merge(mesh.geo.file, raster.data.km2.growth)
-
-    # Save as geopackage
-    sf::st_write(final.table, append = FALSE,
-                 paste0(output.folder,
-                        substr(output.name, 1, nchar(output.name) - 4),
-                        ".gpkg"))
-
-    # Save as geopackage the simplified version
-    sf::st_write(final.table[,!is.na(as.numeric(colnames(final.table)))],
-                 append = FALSE,
-                 paste0(output.folder, "simplified_",
-                        substr(output.name, 1, nchar(output.name) - 4),
-                        ".gpkg"))
 
     # Return ####
-    return(final.table)
-}
+    return(raster.data.km2.growth)
+  }
