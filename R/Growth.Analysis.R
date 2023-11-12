@@ -18,25 +18,21 @@ Growth.Analysis <-
     # Create mesh
     mesh.geo.file <- create.mesh(geo.file = geo.file, mesh.size = mesh.size)
 
-    # Get the complete files names where the tif.files are located (tif.folder)
-    tif.files.names <- list.files(tif.folder, full.names = TRUE)
+    # Read the tif.file into RasterStack
+    tif.list <- read.raster(raster.file = tif.folder)
 
     # Calculate the classes for each raster file
     raster.data <-
-      lapply(tif.files.names, FUN = function(x.int){
+      lapply(X = tif.list, FUN = function(x.int){
 
-        # Separar oq tiver ponto
-        year.proxy <- strsplit(as.character(x.int), split = ".", fixed = TRUE)
-
-        # pegar o penúltimo elemento (antes do .tif ou .tiff)
-        year.proxy <- sapply(year.proxy, "[[", length(year.proxy[[1]]) - 1)
-
-        # Pegar os últimos 4 caracteres
-        year.proxy <- substr(year.proxy, nchar(year.proxy) - 3, nchar(year.proxy))
+        # Pegar os últimos 4 caracteres do nome
+        year.proxy <- substr(x = x.int[[1]]@data@names,
+                             start = nchar(x.int[[1]]@data@names) - 3,
+                             stop = nchar(x.int[[1]]@data@names))
 
         # Rodar o calc.raster usando esse ano específico como uma coluna
         raster.data.proxy <- calc.raster(geo.file = mesh.geo.file,
-                                         tif.file = as.character(x.int),
+                                         tif.file = x.int[[1]],
                                          year.used = year.proxy)
 
         return(raster.data.proxy)
