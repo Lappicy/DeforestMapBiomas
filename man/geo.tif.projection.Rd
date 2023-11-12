@@ -1,11 +1,11 @@
 \name{geo.tif.projection}
 \alias{geo.tif.projection}
-\title{Closes the connections made using the functinos of these packages.}
+\title{Ensure the correct projection of vector (geospatial) file.}
 \usage{
 geo.tif.projection(geo.file, tif.file)
 }
 \arguments{
-  \item{geo.file}{The geospatial file used}
+  \item{geo.file}{The vector / geospatial file used}
   \item{tif.file}{The image / raster used}
 }
 \value{
@@ -16,10 +16,10 @@ This function reads the geospatial file with the existing \code{read.geo} functi
 }
 \examples{
 # Get example data
-data(Uaca_1_2)
-data(MapBiomas_71_Uaca)
-MapBiomas.proxy <- MapBiomas_71_Uaca[[1]]
+data(CavernaMaroaga)
+data(MapBiomas_8_CavernaMaroaga)
+MapBiomas.proxy <- MapBiomas_8_CavernaMaroaga[[1]]
 
 # Make sure the projection is the same
-geo.tif.projection(geo.file = Uaca_1_2, tif.file = MapBiomas.proxy)
+geo.tif.projection(geo.file = CavernaMaroaga, tif.file = MapBiomas.proxy)
 }
