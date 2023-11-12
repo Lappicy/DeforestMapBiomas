@@ -1,21 +1,19 @@
-# Uaca 1 e 2 example ####
+# Caverna do Maroaga (Presidente Figueiredo) example ####
 FinalAnalysis <-
-  Growth.Analysis(geo.file = "Data/GPKG/Uaca_1_2.gpkg",
-                  tif.folder = "Data/MapBiomas71/",
+  Growth.Analysis(geo.file = "Example application/Data/GPKG/Caverna do Maroaga.gpkg",
+                  tif.folder = "Example application/Data/MapBiomas8",
                   mesh.size = 0.045,
                   output.folder = "Results/",
-                  output.name = "Analysis_Uaca.txt",
-                  MAPBIOMAS = 7.1)
+                  output.name = "Analysis_CavernaMaroaga",
+                  MAPBIOMAS = 8)
 
 
 # Graph number 1 (time series + correlation) ####
 gg.deforestation.cor(proxy.table = FinalAnalysis,
-                     type.one = "Growth",
-                     type.two = "Deforestation",
-                     color.one = c("purple", "grey50", "#EA9999", "darkorange"), 
-                     color.two = "darkgreen",
-                     save.as = "Results/Deforestation vs Growth.png",
-                     title.name = "Analysis for Uaça 1 e 2")
+                     comparison.name = "Growth",
+                     comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
+                     save.as = "Results/Maroaga Deforestation vs Growth.png",
+                     title.name = "Analysis for Caverna do Maroaga")
 
 
 # Graph number 2 (mesh map) ####
