@@ -9,61 +9,58 @@ count.growth <- function(proxy.table,
 
 
   # Function itself ####
-  # Calculate GROWTH for...
+  # Read geo.file
+  geo.file <- read.geo(file.name = geo.file)
 
-  # DEFORESTATION
-  proxy.table$Deforestation[2:nrow(proxy.table)] <-
-    base::diff(proxy.table[["Forest"]], lag = 1) * (-1)
+  # Create mesh
+  mesh.geo.file <- create.mesh(geo.file = geo.file, mesh.size = mesh.size)
 
-  # REFORESTATION (when deforestation is negative)
-  proxy.table$Reforestation <-
-    ifelse(is.na(proxy.table[["Deforestation"]]) |
-             proxy.table[["Deforestation"]] < 0,
-           proxy.table[["Deforestation"]] * (-1),
-           0)
+  # Read the tif.file into RasterStack
+  tif.list <- read.raster(raster.file = tif.folder)
 
-  # GROWTH AGRICULTURE
-  proxy.table$Growth_Agriculture[2:nrow(proxy.table)] <-
-    base::diff(proxy.table[["Agriculture"]], lag = 1)
+  # Calculate the classes for each raster file
+  raster.data <-
+    lapply(X = tif.list, FUN = function(x.int){
 
-  # GROWTH MINING
-  proxy.table$Growth_Mining[2:nrow(proxy.table)] <-
-    base::diff(proxy.table[["Mining"]], lag = 1)
+      # Pegar os últimos 4 caracteres do nome
+      year.proxy <- substr(x = x.int[[1]]@data@names,
+                           start = nchar(x.int[[1]]@data@names) - 3,
+                           stop = nchar(x.int[[1]]@data@names))
 
-  # GROWTH PASTURE
-  proxy.table$Growth_Pasture[2:nrow(proxy.table)] <-
-    base::diff(proxy.table[["Pasture"]], lag = 1)
+      # Rodar o calc.raster usando esse ano específico como uma coluna
+      raster.data.proxy <- calc.raster(geo.file = mesh.geo.file,
+                                       tif.file = x.int[[1]],
+                                       year.used = year.proxy)
 
-  # GROWTH URBAN
-  proxy.table$Growth_Urban[2:nrow(proxy.table)] <-
-    base::diff(proxy.table[["Urban"]], lag = 1)
+      return(raster.data.proxy)
+    })
 
-  # First year as NA always!
-  proxy.table[(proxy.table$Year == min(proxy.table$Year)),
-              c("Deforestation", "Reforestation",
-                "Growth_Urban", "Growth_Mining",
-                "Growth_Pasture", "Growth_Agriculture")] <- NA
+  # Change the list to a single data.frame with all the columns
+  raster.data <- dplyr::bind_rows(raster.data)
+  raster.data <- raster.data[order(raster.data$ID_mesh),]
 
-  # When growths are negative, make them equal zero
-  proxy.table[which(proxy.table$Deforestation < 0), "Deforestation"] <- 0
-  proxy.table[which(proxy.table$Growth_Agriculture < 0), "Growth_Agriculture"] <- 0
-  proxy.table[which(proxy.table$Growth_Mining < 0), "Growth_Mining"] <- 0
-  proxy.table[which(proxy.table$Growth_Pasture < 0), "Growth_Pasture"] <- 0
-  proxy.table[which(proxy.table$Growth_Urban < 0), "Growth_Urban"] <- 0
+  # If the output doesnt exist, create it
+  dir.create(file.path(getwd(), output.folder), showWarnings = FALSE)
 
-  # Reorganize data
-  # Columns that we want to use later
-  suppressWarnings(col.num <- which(!is.na(as.numeric(colnames(proxy.table)))))
-  first.col <- 1:(min(col.num) - 1)
+  # Save this file (because it is time consuming) and remove folder
+  write.table(x = raster.data,
+              file = paste0(output.folder, "CalcRasterPixels.txt"),
+              dec = ".", sep = "\t", quote = F, col.names = T, row.names = F,
+              fileEncoding = "UTF-8")
+  unlink("Proxy/", recursive = TRUE)
 
-  # Reorder columns
-  proxy.table <- proxy.table[, c(colnames(proxy.table)[first.col],
-                                 "Deforestation", "Reforestation",
-                                 "Growth_Urban", "Growth_Mining",
-                                 "Growth_Pasture", "Growth_Agriculture",
-                                 "Forest", "NonForest", "Water", "Others",
-                                 "Urban", "Mining", "Pasture", "Agriculture",
-                                 sort(as.numeric(colnames(proxy.table)[col.num])))]
+  # Transform pixel to km2
+  raster.data.km2 <- pixel.to.km2(proxy.table = raster.data)
+
+  # Count classes
+  raster.data.km2.classes <- count.classes(proxy.table = raster.data.km2,
+                                           MAPBIOMAS = MAPBIOMAS,
+                                           PRODES = PRODES)
+
+  # Calculate growth
+  raster.data.km2.growth <- count.growth(proxy.table = raster.data.km2.classes,
+                                         output.folder = output.folder,
+                                         output.name = output.name)
 
 
   # Save two files/tables as .txt (text) and two as .gpkg (vector) file ####

@@ -10,9 +10,8 @@ calc.raster <- function(geo.file,
 
 
   # Function itself ####
-  # Open geo.file and tif
+  # Open geo.file
   geo.file <- read.geo(geo.file)
-  tif.file <- raster::raster(tif.file)
 
   # Reproject geo.file if needed
   geo.file <- geo.tif.projection(geo.file = geo.file, tif.file = tif.file)

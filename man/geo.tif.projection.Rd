@@ -16,8 +16,8 @@ This function reads the geospatial file with the existing \code{read.geo} functi
 }
 \examples{
 # Get example data
-data(CavernaMaroaga)
-data(MapBiomas_8_CavernaMaroaga)
+data("CavernaMaroaga")
+data("MapBiomas_8_CavernaMaroaga")
 MapBiomas.proxy <- MapBiomas_8_CavernaMaroaga[[1]]
 
 # Make sure the projection is the same

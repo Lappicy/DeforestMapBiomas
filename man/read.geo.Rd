@@ -15,7 +15,7 @@ This function returns a sf object with the geometry column named as "geometry".
 This function reads the vector (spatial) file given if it is not in a format opened in R already. It then reprojects the data to the desired projection defined by \code{projection.wanted}. It then changes the name for the geometry column as "geometry".
 }
 \examples{
-data(CavernaMaroaga)
+data("CavernaMaroaga")
 
 # There is no problem in using the function in an object in the right format already
 CavernaMaroaga <- read.geo(CavernaMaroaga)

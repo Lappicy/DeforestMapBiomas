@@ -14,7 +14,7 @@ This function returns the same \code{geo.file} given as input with an extra colu
 This function uses the \code{read.geo} to read the spatial file given if it is not in a format opened in R already. It then transformrs the crs from the file to the Albers projection. It calculates the area (in km2) and then creates a column in the original file, \code{geo.file}, with this area. Note that the outputed file remains in the same projection as the original.
 }
 \examples{
-data(CavernaMaroaga)
+data("CavernaMaroaga")
 
 CavernaMaroaga <- albers.area(CavernaMaroaga)
 }
