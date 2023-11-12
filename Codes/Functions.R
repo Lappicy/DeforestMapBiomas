@@ -34,6 +34,50 @@ read.geo <- function(file.name, projection.wanted = 4326){
 }
 
 
+# Read raster (image) file in R and stack it into a list ####
+read.raster <- function(raster.file){
+
+  # Dependencies ####
+  require(raster)
+
+
+  # Function itself ####
+  # If the data is a RasterStack, unstack it
+  if(class(raster.file) == "RasterStack") return(raster::unstack(raster.file))
+
+  # If the data is a list, check if it is a named list or a raster list
+  if(class(raster.file) == "list"){
+
+    # If already a list of raster, return it
+    if(any(class(raster.file[[1]]) == "RasterLayer")) return(raster.file)
+
+    # If the list is a character list
+    if(any(class(raster.file[[1]]) == "character")){
+
+      # Read files and turn into a RasterStack
+      return(lapply(raster.file, FUN = function(x.apply){raster::raster(x.apply)}))
+
+    }
+  }
+
+
+  # If the data is a folder name (character) read all the info from that folder
+  if(any(class(raster.file) == "character")){
+
+    # List the files, read them and create a list of Rasters
+    raster.list <-
+      list.files(raster.file, full.names = TRUE) |>
+      lapply(FUN = function(x.apply){raster::raster(x.apply)})
+
+    # Return it
+    return(raster.list)
+  }
+
+  # If not a list, RasterLayer, RasterStack or character vector, stops function
+  stop("Raster class unidentified!")
+}
+
+
 # Calculate the area of a SF object with the Albers projection ####
 Albers.Area <- function(geo.file){
 
@@ -220,9 +264,8 @@ calc.raster <- function(geo.file,
 
 
   # Function itself ####
-  # Open geo.file and tif
+  # Open geo.file
   geo.file <- read.geo(geo.file)
-  tif.file <- raster::raster(tif.file)
 
   # Reproject geo.file if needed
   geo.file <- geo.tif.projection(geo.file = geo.file, tif.file = tif.file)
@@ -646,6 +689,50 @@ Growth.Analysis <-
       }
 
 
+      # Read raster (image) file in R and stack it into a list ####
+      read.raster <- function(raster.file){
+
+        # Dependencies ####
+        require(raster)
+
+
+        # Function itself ####
+        # If the data is a RasterStack, unstack it
+        if(class(raster.file) == "RasterStack") return(raster::unstack(raster.file))
+
+        # If the data is a list, check if it is a named list or a raster list
+        if(class(raster.file) == "list"){
+
+          # If already a list of raster, return it
+          if(any(class(raster.file[[1]]) == "RasterLayer")) return(raster.file)
+
+          # If the list is a character list
+          if(any(class(raster.file[[1]]) == "character")){
+
+            # Read files and turn into a RasterStack
+            return(lapply(raster.file, FUN = function(x.apply){raster::raster(x.apply)}))
+
+          }
+        }
+
+
+        # If the data is a folder name (character) read all the info from that folder
+        if(any(class(raster.file) == "character")){
+
+          # List the files, read them and create a list of Rasters
+          raster.list <-
+            list.files(raster.file, full.names = TRUE) |>
+            lapply(FUN = function(x.apply){raster::raster(x.apply)})
+
+          # Return it
+          return(raster.list)
+        }
+
+        # If not a list, RasterLayer, RasterStack or character vector, stops function
+        stop("Raster class unidentified!")
+      }
+
+
       # Close conections that might be using too much RAM temporary memory in R ####
       close.geo.connections <- function(OS = "Windows"){
 
@@ -760,9 +847,8 @@ Growth.Analysis <-
 
 
         # Function itself ####
-        # Open geo.file and tif
+        # Open geo.file
         geo.file <- read.geo(geo.file)
-        tif.file <- raster::raster(tif.file)
 
         # Reproject geo.file if needed
         geo.file <- geo.tif.projection(geo.file = geo.file, tif.file = tif.file)
@@ -1109,25 +1195,21 @@ Growth.Analysis <-
     # Create mesh
     mesh.geo.file <- create.mesh(geo.file = geo.file, mesh.size = mesh.size)
 
-    # Get the complete files names where the tif.files are located (tif.folder)
-    tif.files.names <- list.files(tif.folder, full.names = TRUE)
+    # Read the tif.file into RasterStack
+    tif.list <- read.raster(raster.file = tif.folder)
 
     # Calculate the classes for each raster file
     raster.data <-
-      lapply(tif.files.names, FUN = function(x.int){
+      lapply(X = tif.list, FUN = function(x.int){
 
-        # Separar oq tiver ponto
-        year.proxy <- strsplit(as.character(x.int), split = ".", fixed = TRUE)
-
-        # pegar o penúltimo elemento (antes do .tif ou .tiff)
-        year.proxy <- sapply(year.proxy, "[[", length(year.proxy[[1]]) - 1)
-
-        # Pegar os últimos 4 caracteres
-        year.proxy <- substr(year.proxy, nchar(year.proxy) - 3, nchar(year.proxy))
+        # Pegar os últimos 4 caracteres do nome
+        year.proxy <- substr(x = x.int[[1]]@data@names,
+                             start = nchar(x.int[[1]]@data@names) - 3,
+                             stop = nchar(x.int[[1]]@data@names))
 
         # Rodar o calc.raster usando esse ano específico como uma coluna
         raster.data.proxy <- calc.raster(geo.file = mesh.geo.file,
-                                         tif.file = as.character(x.int),
+                                         tif.file = x.int[[1]],
                                          year.used = year.proxy)
 
         return(raster.data.proxy)
