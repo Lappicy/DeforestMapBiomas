@@ -4,7 +4,7 @@ gg.deforestation.cor <-
            comparison.name = "Growth",
            comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
            save.as = "Results/Deforestation vs Growth.png",
-           title.name = "Analysis for Uaça 1 e 2",
+           title.name = "Analysis for Caverna do Maroaga",
            different.groups = NULL,
            ...){
 
@@ -140,12 +140,13 @@ gg.deforestation.cor <-
 
     }
 
-    # Returns (NULL) ####
-    return(NULL)
+    # Returns ####
+    # Returns the graph itself
+    return(gg.internal)
 }
 
 
-# Mapa para um ano em específico e uma classe específica ####
+# Map for a specific year and class ####
 mesh.map <- function(mesh.data,
                      class = "Deforestation",
                      year.used = "all",

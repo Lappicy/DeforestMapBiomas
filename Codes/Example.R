@@ -1,7 +1,7 @@
 # Caverna do Maroaga (Presidente Figueiredo) example ####
 FinalAnalysis <-
-  Growth.Analysis(geo.file = "Example application/Data/GPKG/Caverna do Maroaga.gpkg",
-                  tif.folder = "Example application/Data/MapBiomas8",
+  Growth.Analysis(geo.file = data("CavernaMaroaga"),
+                  tif.folder = data("MapBiomas_8_CavernaMaroaga"),
                   mesh.size = 0.045,
                   output.folder = "Results/",
                   output.name = "Analysis_CavernaMaroaga",
