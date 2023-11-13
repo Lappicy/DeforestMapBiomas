@@ -21,4 +21,4 @@ Imports:
     stats
 RoxygenNote: 7.2.3
 Depends: 
-    R (>= 4.2.0)
+    R (>= 2.10)
