@@ -1,5 +1,5 @@
 # Graph for Deforestation x Other classes growth ####
-gg.deforestation.cor <-
+graphical.timeseries <-
   function(proxy.table,
            comparison.name = "Growth",
            comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
@@ -147,13 +147,13 @@ gg.deforestation.cor <-
 
 
 # Map for a specific year and class ####
-mesh.map <- function(mesh.data,
-                     class = "Deforestation",
-                     year.used = "all",
-                     col.limits = c(0, 1, 2, 5), #c(0, 30, 60, 100),
-                     col.used = c("white", "#E5E200", "#FC780D", "red", "darkred"),
-                     save.map.as,
-                     ...){
+map.layout <- function(mesh.data,
+                       class = "Deforestation",
+                       year.used = "all",
+                       col.limits = c(0, 1, 2, 5), #c(0, 30, 60, 100),
+                       col.used = c("white", "#E5E200", "#FC780D", "red", "darkred"),
+                       save.map.as,
+                       ...){
 
   # Dependencies ####
   require(ggplot2)
@@ -296,5 +296,6 @@ mesh.map <- function(mesh.data,
   # Returns the map itself if still wants to usee it
   return(map.internal)
 }
+
 
 # End -------------------------------------------------------------------------
