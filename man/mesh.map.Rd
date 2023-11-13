@@ -25,13 +25,12 @@ This function takes the output from the \code{Growth.Analysis()} function, selec
 }
 \examples{
 # Load data
-data("CavernaMaroaga")
-data("MapBiomas_8_CavernaMaroaga")
+example.files()
 
 # Run previous analysis needed (takes about ~10min)
 FinalAnalysis <-
   Growth.Analysis(geo.file = CavernaMaroaga,
-                  tif.folder = MapBiomas_8_CavernaMaroaga,
+                  tif.folder = MapBiomas_8_example,
                   mesh.size = 0.045,
                   output.folder = "Results/",
                   output.name = "Analysis_CavernaMaroaga.txt",

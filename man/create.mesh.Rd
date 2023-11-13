@@ -16,7 +16,7 @@ This function returns a squared mesh / grid with the same extent as the \code{ge
 This function uses the \code{read.geo} to read the spatial file given if it is not in a format opened in R already. It then creates a square mesh with the sides having length as defined by \code{mesh.size}. A new column named \code{ID_mesh} is created for further data manipulation.
 }
 \examples{
-data("CavernaMaroaga")
+example.files()
 
 CavernaMaroaga_mesh <- create.mesh(geo.file = CavernaMaroaga, mesh.size = 0.1)
 plot(st_geometry(CavernaMaroaga_mesh))

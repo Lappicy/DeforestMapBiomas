@@ -1,12 +1,11 @@
 # Read data from package
-data("CavernaMaroaga")
-data("MapBiomas_8_CavernaMaroaga")
+example.files()
 
 
 # Caverna do Maroaga (Presidente Figueiredo) example ####
 FinalAnalysis <-
   Growth.Analysis(geo.file = CavernaMaroaga,
-                  tif.folder = MapBiomas_8_CavernaMaroaga,
+                  tif.folder = MapBiomas_8_example,
                   mesh.size = 0.045,
                   output.folder = "Results/",
                   output.name = "Analysis_CavernaMaroaga",

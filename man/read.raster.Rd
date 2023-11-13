@@ -14,8 +14,9 @@ This function returns a list object having for each element a raster.
 This function reads the \code{raster.file} given and puts it into the same format: a list containing a raster for each element. This is so that the other functions may run properly.
 }
 \examples{
-data("MapBiomas_8_CavernaMaroaga")
+# Load data
+example.files()
 
 # There is no problem in using the function in an object in the right format already
-list.of.raster <- read.raster(MapBiomas_8_CavernaMaroaga)
+list.of.raster <- read.raster(MapBiomas_8_example)
 }
