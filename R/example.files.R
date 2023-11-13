@@ -22,7 +22,7 @@ example.files <- function(){
 
   # Create the vector file having the studied area
   CavernaMaroaga <<-
-    sf::st_read(system.file("extdata", "Caverna do Maroaga.gpkg", package = "LandScriptDeforestMap"))
+    sf::st_read(system.file("extdata", "CavernaMaroaga.gpkg", package = "LandScriptDeforestMap"))
 
 
   # Returns nothing ####
