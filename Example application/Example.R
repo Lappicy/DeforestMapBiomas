@@ -3,13 +3,12 @@ example.files()
 
 
 # Caverna do Maroaga (Presidente Figueiredo) example ####
-FinalAnalysis <-
-  Growth.Analysis(geo.file = CavernaMaroaga,
-                  tif.folder = MapBiomas_8_example,
-                  mesh.size = 0.045,
-                  output.folder = "Results/",
-                  output.name = "Analysis_CavernaMaroaga",
-                  MAPBIOMAS = 8)
+FinalAnalysis <- Growth.Analysis(geo.file = CavernaMaroaga,
+                                 tif.folder = MapBiomas_8_example,
+                                 mesh.size = 0.045,
+                                 output.folder = "Results/",
+                                 output.name = "Analysis_CavernaMaroaga",
+                                 MAPBIOMAS = 8)
 
 
 # Graph number 1 (time series + correlation) ####
@@ -23,5 +22,8 @@ graphical.timeseries(proxy.table = FinalAnalysis,
 
 # Graph number 2 (mesh map) ####
 map.layout(mesh.data = FinalAnalysis,
-           save.map.as = "Results/Map acumulated deforestation.png",
-           map.height = 2300, map.width = 2100, map.units = "px")
+           class = "Deforestation",
+           year.used = "all",
+           col.limits = c(0, 1, 2, 5),
+           save.map.as = "Results/Map acumulated deforestation.png")
+
