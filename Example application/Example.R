@@ -1,4 +1,4 @@
-# Read data from package
+# Read data from package ####
 example.files()
 
 
@@ -13,7 +13,7 @@ FinalAnalysis <-
 
 
 # Graph number 1 (time series + correlation) ####
-gg.deforestation.cor(proxy.table = FinalAnalysis,
+graphical.timeseries(proxy.table = FinalAnalysis,
                      comparison.name = "Growth",
                      comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
                      save.as = "Results/Maroaga Deforestation vs Growth.png",
@@ -21,6 +21,6 @@ gg.deforestation.cor(proxy.table = FinalAnalysis,
 
 
 # Graph number 2 (mesh map) ####
-mesh.map(mesh.data = FinalAnalysis,
-         save.map.as = "Results/Map acumulated deforestation.png",
-         map.height = 2300, map.width = 2100, map.units = "px")
+map.layout(mesh.data = FinalAnalysis,
+           save.map.as = "Results/Map acumulated deforestation.png",
+           map.height = 2300, map.width = 2100, map.units = "px")
