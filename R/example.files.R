@@ -26,5 +26,5 @@ example.files <- function(){
 
 
   # Returns nothing ####
-  return()
+  invisible()
 }
