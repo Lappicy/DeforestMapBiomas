@@ -1,11 +1,11 @@
 # Map for a specific year and class ####
 map.layout <- function(mesh.data,
-                     class = "Deforestation",
-                     year.used = "all",
-                     col.limits = c(0, 1, 2, 5), #c(0, 30, 60, 100),
-                     col.used = c("white", "#E5E200", "#FC780D", "red", "darkred"),
-                     save.map.as,
-                     ...){
+                       class = "Deforestation",
+                       year.used = "all",
+                       col.limits = c(0, 1, 2, 5), #c(0, 30, 60, 100),
+                       col.used = c("white", "#E5E200", "#FC780D", "red", "darkred"),
+                       save.map.as,
+                       ...){
 
   # Dependencies ####
   require(ggplot2)
