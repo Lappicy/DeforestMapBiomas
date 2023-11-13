@@ -70,7 +70,7 @@ gg.deforestation.cor(proxy.table = FinalAnalysis,
                      save.as = "Results/Deforestation vs Growth.png",
                      title.name = "Analysis for Caverna do Maroaga")
 ```
-![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Deforestation%20vs%20Growth.png?raw=true)
+![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Maroaga%20Deforestation%20vs%20Growth.png?raw=true)
 
 ### Output map from the mesh.map function
 Lastely, we bring the result of the outputed map for the acumulated deforestation in "Caverna do Maroaga". To achieve this, you should run the following code:
