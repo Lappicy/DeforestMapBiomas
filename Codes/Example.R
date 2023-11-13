@@ -14,7 +14,8 @@ FinalAnalysis <-
 
 # Graph number 1 (time series + correlation) ####
 graphical.timeseries(proxy.table = FinalAnalysis,
-                     comparison.name = "Growth",
+                     comparison.names = c("Growth_Agriculture", "Growth_Mining",
+                                          "Growth_Pasture", "Growth_Urban"),
                      comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
                      save.as = "Results/Maroaga Deforestation vs Growth.png",
                      title.name = "Analysis for Caverna do Maroaga")

@@ -1,8 +1,9 @@
 # Graph for Deforestation x Other classes growth ####
 graphical.timeseries <-
   function(proxy.table,
-           comparison.name = "Growth",
-           comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
+           comparison.names = c("Growth_Agriculture", "Growth_Mining",
+                                "Growth_Pasture", "Growth_Urban"),
+           comparison.color = c("darkorange", "grey50",  "#EA9999", "purple"),
            save.as = "Results/Deforestation vs Growth.png",
            title.name = "Analysis for Caverna do Maroaga",
            different.groups = NULL,
@@ -40,21 +41,18 @@ graphical.timeseries <-
       proxy.table$Year <- as.numeric(proxy.table$Year)
 
       # Columns that have "comparison.name" or "Deforestation" in their names
-      columns.comparison <-
-        colnames(proxy.table)[grep(comparison.name, colnames(proxy.table))]
+      columns.comparison <- match(comparison.names, colnames(proxy.table))
+      columns.Deforestation <- match(comparison.deforest, colnames(proxy.table))
 
-      columns.comparison.names <- substr(x = columns.comparison,
-                                         start = nchar(comparison.name) + 2,
-                                         stop = nchar(columns.comparison))
-
-      columns.Deforestation <-
-        colnames(proxy.table)[grep(comparison.deforest, colnames(proxy.table))]
-
+      # Remove the "Growth_" if it exists
+      if(all(substr(comparison.names, 1, 7) == "Growth_")){
+        comparison.names.new <- substr(comparison.names, 8, nchar(comparison.names))
+      } else comparison.names.new <- comparison.names
 
       # Correlation analysis ####
       # Only get type.one and type.two columns
-      cor.table <- proxy.table[,which(colnames(proxy.table) %in%
-                                        c(columns.comparison, columns.Deforestation))]
+      cor.table <- proxy.table[,c(columns.Deforestation, columns.comparison)]
+      colnames(cor.table) <- c(comparison.deforest, comparison.names.new)
 
       # Remove any blank data (NA)
       cor.table <- na.omit(cor.table)
@@ -76,8 +74,7 @@ graphical.timeseries <-
       if(nchar(cor.information) == 4) cor.information <- paste0(cor.information, "0")
 
       # Name the values
-      names(cor.information) <-
-        columns.comparison.names[which.max(abs(cor.data[2:length(cor.data)]))]
+      names(cor.information) <- names(which.max(abs(cor.data[2:length(cor.data)])))
 
 
       # Prepare table for ggplot2 ####
@@ -90,15 +87,16 @@ graphical.timeseries <-
         dplyr::reframe(NumValue = sum(NumValue, na.rm = TRUE)) |>
         as.data.frame()
 
-      # Change the column "classes"
-      proxy.table$Classes[proxy.table$Classes != comparison.deforest] <-
-        columns.comparison.names[na.omit(base::match(proxy.table$Classes,
-                                                     columns.comparison))]
+      # Change the "classes" from comparison.names to comparison.names.new
+      proxy.table$Classes[proxy.table$Classes %in% comparison.names] <-
+        comparison.names.new[match(proxy.table$Classes[proxy.table$Classes %in%
+                                                         comparison.names],
+                                   comparison.names)]
 
       # Transform classes into factors with order
       proxy.table$Classes <- factor(x = proxy.table$Classes,
-                                    levels = c(columns.Deforestation,
-                                               sort(columns.comparison.names)))
+                                    levels = c(comparison.deforest,
+                                               sort(comparison.names.new)))
 
       # GGPLOT2 graph ####
       gg.internal <-
@@ -112,7 +110,7 @@ graphical.timeseries <-
         ggplot2::geom_point(alpha = 0.5) +
 
         ggplot2::scale_color_manual(values = c(comparison.color.deforest,
-                                               comparison.color[order(columns.comparison.names)])) +
+                                               comparison.color[order(comparison.names.new)])) +
 
         ggplot2::labs(title = title.name,
                       subtitle = paste0("Greatest correlation with ",
