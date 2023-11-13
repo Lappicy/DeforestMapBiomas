@@ -44,13 +44,12 @@ There are only three main codes one must run for this practical example. One doe
 ### Analysis
 To run the analysis (this may take a few minutes, up to ~10 minutes depending on your computer specifications), one must simply define the geospatial data used (CavernaMaroaga) and the folder on which you downloaded the images or the MapBiomas object created (MapBiomas_8_example). This will output an object with a table like format, named "FinalAnalysis". The first and last two lines of it may be seen after the code.
 ```r
-FinalAnalysis <-
-  Growth.Analysis(geo.file = CavernaMaroaga,
-                  tif.folder = MapBiomas_8_example,
-                  mesh.size = 0.045,
-                  output.folder = "Results/",
-                  output.name = "Analysis_CavernaMaroaga",
-                  MAPBIOMAS = 8)
+FinalAnalysis <- Growth.Analysis(geo.file = CavernaMaroaga,
+                                 tif.folder = MapBiomas_8_example,
+                                 mesh.size = 0.045,
+                                 output.folder = "Results/",
+                                 output.name = "Analysis_CavernaMaroaga",
+                                 MAPBIOMAS = 8)
 ```
 
 | ID_mesh |	Country | Category | Name | Year | Deforestation | Reforestation | Growth_Urban | Growth_Mining | Growth_Pasture | Growth_Agriculture | Forest | NonForest | Water | Others | Urban | Mining | Pasture | Agriculture | 0 | 3 | 4 | 6 | 11 | 12 | 15 | 24 | 30 | 33 | 41 |
@@ -65,8 +64,9 @@ FinalAnalysis <-
 Below it is shown the correlation of different known classes in "Caverna do Maroaga". To run this one must write:
 ```r
 graphical.timeseries(proxy.table = FinalAnalysis,
-                     comparison.name = "Growth",
-                     comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
+                     comparison.names = c("Growth_Agriculture", "Growth_Mining",
+                                          "Growth_Pasture", "Growth_Urban"),
+                     comparison.color = c("darkorange", "grey50",  "#EA9999", "purple")
                      save.as = "Results/Deforestation vs Growth.png",
                      title.name = "Analysis for Caverna do Maroaga")
 ```
@@ -76,6 +76,9 @@ graphical.timeseries(proxy.table = FinalAnalysis,
 Lastely, we bring the result of the outputed map for the acumulated deforestation in "Caverna do Maroaga". To achieve this, you should run the following code:
 ```r
 map.layout(mesh.data = FinalAnalysis,
+           class = "Deforestation",
+           year.used = "all",
+           col.limits = c(0, 1, 2, 5),
            save.map.as = "Results/Map acumulated deforestation.png")
 ```
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Map%20acumulated%20deforestation.png?raw=true)
