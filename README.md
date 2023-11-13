@@ -61,10 +61,10 @@ FinalAnalysis <-
 | 221 | Brazil | Environmental Protection Area | Caverna do Maroaga |	2021 | 0 | 0 | 0 | 0 | 0 | 0 | 1.2141 | 0.0837 | 0.0252 | 0 | 0 | 0 | 0 | 0 | NA | 1.2141 | NA | NA | 0.0405 | 0.0432 | NA | NA | NA | 0.0252 | NA |
 | 221 | Brazil |Environmental Protection Area |	Caverna do Maroaga | 2022 | 0.0144 | 0 | 0 | 0 | 0 | 0 | 1.1997 | 0.0396 | 0.0837 | 0 | 0 | 0 | 0 | 0 | NA | 1.1997 | NA | NA | NA | 0.0396 | NA | NA | NA | 0.0837 | NA |
 
-### Correlation analysis with gg.deforestation.cor function
+### Correlation analysis with graphical.timeseries function
 Below it is shown the correlation of different known classes in "Caverna do Maroaga". To run this one must write:
 ```r
-gg.deforestation.cor(proxy.table = FinalAnalysis,
+graphical.timeseries(proxy.table = FinalAnalysis,
                      comparison.name = "Growth",
                      comparison.color = c("purple", "grey50", "#EA9999", "darkorange"),
                      save.as = "Results/Deforestation vs Growth.png",
@@ -72,16 +72,16 @@ gg.deforestation.cor(proxy.table = FinalAnalysis,
 ```
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Maroaga%20Deforestation%20vs%20Growth.png?raw=true)
 
-### Output map from the mesh.map function
+### Output map from the map.layout function
 Lastely, we bring the result of the outputed map for the acumulated deforestation in "Caverna do Maroaga". To achieve this, you should run the following code:
 ```r
-mesh.map(mesh.data = FinalAnalysis,
-         save.map.as = "Results/Map acumulated deforestation.png")
+map.layout(mesh.data = FinalAnalysis,
+           save.map.as = "Results/Map acumulated deforestation.png")
 ```
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Map%20acumulated%20deforestation.png?raw=true)
 
 ## Other practical examples
-The code proposed in here was widely teste throughout the Amazon region, using many different spatial resolutions. Below we bring also some examples of possible outputs, using the Guiana Shield Region. The first image shows the gridded map, which encompasses 6 countries (Brazil, Columbia, French Guiana, Guyana, Suriname and Venezuela) that belongs to the Guiana Shield Region. We may see through this map where the deforestation is more agressive, as well as showing the behaviour for other 3 known classes from MapBiomas. In addition to the different countries, we also used (with a specific geospatial file) where the protected areas where - and, therefore, giving a more important information for the deforestation patterns.
+The code proposed in here was widely teste throughout the Amazon region, using many different spatial resolutions. Below we bring also some examples of possible outputs, using the Guiana Shield Region. The first image shows the gridded map, which encompasses 6 countries (Brazil, Columbia, French Guiana, Guyana, Suriname and Venezuela) that belongs to the Guiana Shield Region. We may see through this map where the deforestation is more agressive, as well as showing the behaviour for other 3 known classes from MapBiomas. In addition to the different countries, we also used (with a specific vector file) where the protected areas where - and, therefore, giving a more important information for the deforestation patterns.
 
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Others/Guiana%20Shield%20Example.png?raw=true)
 
