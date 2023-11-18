@@ -98,6 +98,9 @@ graphical.timeseries <-
                                     levels = c(comparison.deforest,
                                                sort(comparison.names.new)))
 
+      # Transformar em Data
+      proxy.table$Year <- as.Date(paste0(proxy.table$Year, "-01-01"))
+
       # GGPLOT2 graph ####
       gg.internal <-
 
@@ -120,6 +123,8 @@ graphical.timeseries <-
         ggplot2::scale_y_continuous(labels = function(x) format(x, big.mark = ",",
                                                                 decimal.mark = ".",
                                                                 scientific = F)) +
+        ggplot2::scale_x_date(date_labels = "%Y") + # date_breaks = "1 year"
+
         ggplot2::theme_bw() +
         ggplot2::theme(legend.position = "top",
                        legend.text = element_text(size = 12, color = "black"),
@@ -141,7 +146,7 @@ graphical.timeseries <-
     # Returns ####
     # Returns the graph itself
     return(gg.internal)
-}
+  }
 
 
 # Map for a specific year and class ####
