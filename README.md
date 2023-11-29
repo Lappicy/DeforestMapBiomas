@@ -1,11 +1,13 @@
 # LandScriptDeforestMap
-Deforestation analysis on classified images
+Deforestation analysis on classified images.
 
 The following code is aimed to help with deforestation analysis, using classified images - such as from MapBiomas.
 
 ## Download the package in R/Rstudio
 
-To download the package through **R**, you must have downloaded the *devtools* package (https://cran.r-project.org/web/packages/devtools/index.html). If using windows as an OS (Operating System), it is needed to first download **Rtools**, from the website (https://cran.r-project.org/bin/windows/Rtools/).
+If using windows as an OS (Operating System), it is needed to first download **Rtools** from the website (https://cran.r-project.org/bin/windows/Rtools/).
+
+Then, to download **LandScriptDeforestMap** through **R**, you must download the *devtools* package beforehand (https://cran.r-project.org/web/packages/devtools/index.html).
 
 To install and open the *devtools* package using the command line in R, run the following codes:
 ```r
@@ -19,13 +21,13 @@ library(LandScriptDeforestMap)
 ```
 
 ## Usage
-By defining a vector file (geopackage or shapefile), also called here as geospatial file, and a folder with the needed images, this software will produce three main results for a proposed mesh (the refinement may be adjusted by an argument on the functions used):
+By defining a vector file (geopackage or shapefile), also called here as a geospatial file, and a folder with the needed images, this package may produce three main results for a proposed mesh (the refinement may be adjusted by an argument on the functions used):
 1. A vector (geospatial) file with the frequency for each class inside each grid cell (from the proposed mesh);
 2. Compare the deforestation time series with the growth of known classes (agriculture, pasture, urban and mining);
 3. A map showing heatmaps for the acumulated, or for a given year, deforestation (or one of the other known classes).
 
 ## Practical example
-As an example, within this github there is data for a study case of the Environmentally Protected Area of "Caverna do Maroaga (Presidente Figueiredo)", inside Brazil.
+As an example, within this github there is data for a study case of the brazilian Protected Area named "Caverna do Maroaga (Presidente Figueiredo)".
 
 ### Data used
 To open the data used here, one must simply write at the console the function "example.files()":
@@ -33,16 +35,16 @@ To open the data used here, one must simply write at the console the function "e
 example.files()
 ```
 
-The "CavernaMaroaga" is a sf object with the boundaries for "Caverda do Maroaga". The "MapBiomas_8_example" is a list, that contains the collection 8.0 from MapBiomas for the years 2013 to 2022 (10 elements on this list). These images were already cut to only have the extent of "Caverda do Maroaga". This was made to make the folder lighter, but using the original images should not affect the results or the processing time by any significant standards.
+The "CavernaMaroaga" is, inside the **R** environment, a sf object with the boundaries for "Caverda do Maroaga". The "MapBiomas_8_example" is a list, that contains the collection 8.0 from MapBiomas for the years 2013 to 2022 (10 elements on this list). These images were already cut to only have the extent of "Caverda do Maroaga". This was made to make the folder lighter, but using the original images should not affect the results or the processing time by any significant standards.
 
 ### Other way to acess data
-Another way is to manually download everything from this github directory. There is an "Example application" folder, within it you can find a folder entitles "Data" which has 2 subdirectories. One, "GPKG", has a geopackage file with the boundaries of "Caverda do Maroaga", and a folder entitles "Mapbiomas8" has MapBiomas images MapBiomas (collection 8.0) from 2013 to 2022.
+Another way is to manually download everything from this github directory. There is an "Example application" folder, within it you can find a folder entitles "Data" which has 2 subdirectories. One, "GPKG", has a geopackage file with the boundaries of "Caverda do Maroaga", and the folder entitled "Mapbiomas8" has MapBiomas images (collection 8.0) from 2013 to 2022.
 
 ### The code itself
-There are only three main codes one must run for this practical example. One does the analysis and creates a sf object with all the necessary data for future analysis while the other two are graphical functions - one for a time series graph for deforestation x possible causing vectors and the other is a map showing the locations of such deforestation or growth of these other vectors.
+There are only three main functions that one must run for this practical example. One does the analysis and creates a sf object with all the necessary data for future analysis while the other two are graphical functions - one for a time series graph for deforestation and the possible driving vectors and the other is a map showing the locations of such deforestation or growth of these other vectors.
 
-### Analysis
-To run the analysis (this may take a few minutes, up to ~10 minutes depending on your computer specifications), one must simply define the geospatial data used (CavernaMaroaga) and the folder on which you downloaded the images or the MapBiomas object created (MapBiomas_8_example). This will output an object with a table like format, named "FinalAnalysis". The first and last two lines of it may be seen after the code.
+### Analysis with the *Growth.Analysis* function
+To run the analysis (this may take a moment, possibly up to ~10 minutes depending on your computer specifications), one must simply define the geospatial data used (CavernaMaroaga) and the folder on which you downloaded the images or the MapBiomas object created (MapBiomas_8_example). This will output an object with a table like format, named "FinalAnalysis". The first and last two lines of it may be seen after the code.
 ```r
 FinalAnalysis <- Growth.Analysis(geo.file = CavernaMaroaga,
                                  tif.folder = MapBiomas_8_example,
@@ -60,19 +62,19 @@ FinalAnalysis <- Growth.Analysis(geo.file = CavernaMaroaga,
 | 221 | Brazil | Environmental Protection Area | Caverna do Maroaga |	2021 | 0 | 0 | 0 | 0 | 0 | 0 | 1.2141 | 0.0837 | 0.0252 | 0 | 0 | 0 | 0 | 0 | NA | 1.2141 | NA | NA | 0.0405 | 0.0432 | NA | NA | NA | 0.0252 | NA |
 | 221 | Brazil |Environmental Protection Area |	Caverna do Maroaga | 2022 | 0.0144 | 0 | 0 | 0 | 0 | 0 | 1.1997 | 0.0396 | 0.0837 | 0 | 0 | 0 | 0 | 0 | NA | 1.1997 | NA | NA | NA | 0.0396 | NA | NA | NA | 0.0837 | NA |
 
-### Correlation analysis with graphical.timeseries function
-Below it is shown the correlation of different known classes in "Caverna do Maroaga". To run this one must write:
+### Correlation analysis with the *graphical.timeseries()* function
+Below it is shown the plotted time series of deforestation with the known drivers evaluated (agriculture, mining, urban growth and pasture) for "Caverna do Maroaga". The correlation between the deforestation and these other classes were calculated, with the highest one (Pasture) being shown as a subtitle. To run this one must write:
 ```r
 graphical.timeseries(proxy.table = FinalAnalysis,
                      comparison.names = c("Growth_Agriculture", "Growth_Mining",
                                           "Growth_Pasture", "Growth_Urban"),
-                     comparison.color = c("darkorange", "grey50",  "#EA9999", "purple")
+                     comparison.color = c("darkorange", "grey50",  "#EA9999", "purple"),
                      save.as = "Results/Deforestation vs Growth.png",
                      title.name = "Analysis for Caverna do Maroaga")
 ```
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Maroaga%20Deforestation%20vs%20Growth.png?raw=true)
 
-### Output map from the map.layout function
+### Output map from the *map.layout()* function
 Lastely, we bring the result of the outputed map for the acumulated deforestation in "Caverna do Maroaga". To achieve this, you should run the following code:
 ```r
 map.layout(mesh.data = FinalAnalysis,
@@ -84,11 +86,11 @@ map.layout(mesh.data = FinalAnalysis,
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Results/Map%20acumulated%20deforestation.png?raw=true)
 
 ## Other practical examples
-The code proposed in here was widely teste throughout the Amazon region, using many different spatial resolutions. Below we bring also some examples of possible outputs, using the Guiana Shield Region. The first image shows the gridded map, which encompasses 6 countries (Brazil, Columbia, French Guiana, Guyana, Suriname and Venezuela) that belongs to the Guiana Shield Region. We may see through this map where the deforestation is more agressive, as well as showing the behaviour for other 3 known classes from MapBiomas. In addition to the different countries, we also used (with a specific vector file) where the protected areas where - and, therefore, giving a more important information for the deforestation patterns.
+The code shown in this github directory has been widely tested throughout the Amazon region, using different spatial resolutions. In the next images we bring some examples for the Guiana Shield Region, which encompasses 6 countries (Brazil, Columbia, French Guiana, Guyana, Suriname and Venezuela). We may see through this map where the deforestation is more agressive, as well as observe the behaviour for other 3 known classes from MapBiomas (agriculture, mining and pasture).
 
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Others/Guiana%20Shield%20Example.png?raw=true)
 
-We could take a closer look to the correlations for Brazil. Where the function automatically gives us the highest correlation coefficient found between deforestation and the other classes (+0.70 for Pasture).
+We can take a closer look to the correlations between deforestation and the different classes for the Brazilian part of the Guiana Shield Region with the *graphical.timeseries()* function. In the subtitle it is already shown which class has the highest correlation with deforestation (+0.70 for Pasture), but this can be visually seen as well. Not only that, we may observe that this relation between deforestation and pasture is very strong in every year except for 1988 and 1989 (which corresponds to the years where the construction of the Balbina hydropower plant took place). This is very important to better understand the deforestation patterns and its evolution throughout the years.
 
 ![alt text](https://github.com/Lappicy/DeforestMapBiomas/blob/main/Example%20application/Others/Brazil%20example.png?raw=true)
 
